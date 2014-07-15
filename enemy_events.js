@@ -24,6 +24,9 @@ var enemy_events = {
   spawnHedgehog: function(that){
     that.enemy_events_state.hedgehog = true;
     that.hedgehog = that.enemy.create(0, 600, 'hedgehog');
+    game.physics.p2.enable(that.hedgehog);
+    that.hedgehog.body.collides(that.ground_collision_group);
+    that.hedgehog.body.setCollisionGroup(that.enemy_collision_group);
     that.hedgehog.body.gravity.y = 700;
     that.hedgehog.body.bounce.y = 0.2;
     that.hedgehog.scale.x = 0.3;
@@ -41,22 +44,35 @@ var enemy_events = {
 
   spawnBeehive: function(that){
     that.enemy_events_state.beehive = true;
-    that.beehive = that.enemy.create(800, 300, 'beehive');
+    that.beehive = that.enemy.create(400, 300, 'beehive');
+    game.physics.p2.enable(that.beehive);
+    that.beehive.body.setCircle(100);
+    that.beehive.body.setCollisionGroup(that.enemy_collision_group);
+    that.beehive.body.collides([that.ground_collision_group, that.newton_collision_group]);
+    that.beehive.body.data.gravityScale = 0;
+    that.beehive.body.mass = 500;
+    that.beehive.fixedBody = true;
+    that.beehive.alpha = 1;
     that.beehive.anchor.set(0.5, 0);
-    that.beehive.scale.x = 0.02;
-    that.beehive.scale.y = 0.02;
+    that.beehive.scale.x = 0.2;
+    that.beehive.scale.y = 0.2;
     that.beehive.animations.add('buzz', [0, 1, 2, 3, 2, 1], 10, true);
     that.beehive.animations.play('buzz');
-    game.add.tween(that.beehive.scale).to( { x: 0.2}, 3500, Phaser.Easing.Linear.Out, true)
-    game.add.tween(that.beehive.scale).to( { y: 0.2}, 3500, Phaser.Easing.Linear.Out, true)
-    game.time.events.add(Phaser.Timer.SECOND * 5.5, this.__dropBeehive, this, that);
-    game.time.events.add(Phaser.Timer.SECOND * 7, this.__killBeehive, this, that);
+    game.add.tween(that.beehive.scale).to( { x: 1 }, 3500, Phaser.Easing.Linear.Out, true)
+    game.add.tween(that.beehive.scale).to( { y: 1 }, 3500, Phaser.Easing.Linear.Out, true)
+    game.time.events.add(Phaser.Timer.SECOND * 5, this.__dropBeehive, this, that);
+    game.time.events.add(Phaser.Timer.SECOND * 12.5, this.__fadeBeehive, this, that);
+    game.time.events.add(Phaser.Timer.SECOND * 15, this.__killBeehive, this, that);
   },
 
   __dropBeehive: function(that){
-    that.beehive.body.gravity.y = 350;
+    that.beehive.body.static = false;
+    that.beehive.body.data.gravityScale = 0.5;
   },
   
+  __fadeBeehive: function(that){
+    game.add.tween(that.beehive).to( { alpha: 0 }, 3500, Phaser.Easing.Linear.Out, true)
+  },
   __killBeehive: function(that){
     that.enemy_events_state.beehive = false;
     that.beehive.kill();
@@ -164,8 +180,8 @@ var enemy_events = {
     that.enemy_events_state.UFO = true;
     that.UFO = game.add.group();
     that.UFO.enableBody = true;
-    that.UFO_horizontal_shadow = that.UFO.create(800, 850, 'ufo-horizontal-shadow');
-    that.UFO_vertical_shadow = that.UFO.create(800, 350, 'ufo-vertical-shadow');
+    that.UFO_horizontal_shadow = that.UFO.create(800, 800, 'ufo-horizontal-shadow');
+    that.UFO_vertical_shadow = that.UFO.create(800, 300, 'ufo-vertical-shadow');
     that.UFO_horizontal_shadow.alpha = 0.75;
     that.UFO_horizontal_shadow.anchor.set(0.5, 0.5);
     that.UFO_vertical_shadow.anchor.set(0.5, 0.5);
@@ -192,13 +208,13 @@ var enemy_events = {
   },
 
   __fireBeam: function(that) {
-    that.beam = that.UFO.create(that.UFO_horizontal_shadow.x, -150, 'beam');
+    that.beam = that.UFO.create(that.UFO_horizontal_shadow.x, -200, 'beam');
     that.enemy_events_state.UFO_beam = true;
     that.beam.anchor.setTo(0.5, 0);
     that.beam.alpha = 0;
     that.beam.scale.x = 0.01;
     that.beam.scale.y = 0.01;
-    that.blue_light = that.UFO.create(that.beam.x, that.beam.y + 600, 'blue-light');
+    that.blue_light = that.UFO.create(that.beam.x, that.beam.y + 550, 'blue-light');
     that.blue_light.anchor.setTo(0.5, 0.5);
     that.blue_light.alpha = 0;
     that.blue_light.scale.x = 2.5;
@@ -213,7 +229,7 @@ var enemy_events = {
 
   __chargeBeam: function(that) {
 
-   that.lightEmitter = game.add.emitter(900, 850, 100);
+   that.lightEmitter = game.add.emitter(900, 800, 100);
    that.lightEmitter.width = 200;
    that.lightEmitter.makeParticles('corona');
    that.lightEmitter.setAlpha(0.3, 0.8);

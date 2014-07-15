@@ -23,7 +23,7 @@ var apples = {
   
 
   updateApple: function(that) {
-    if(that.apple_count < 20){
+    if(that.apple_count < 3){
       var pos_x = Math.abs(Math.random() * (1600 - 100)) + 50;
       var pos_y = (Math.random() * 300) + 150
       this.spawnApple(pos_x, pos_y, that);
@@ -137,7 +137,7 @@ var apples = {
     //that.apple.body.kinematic = true;
     apple.body.data.gravityScale = 0;
     apple.body.data.motionState = 1;
-    apple.body.mass = 3; 
+    apple.body.mass = 1; 
   },
 
   growApple: function(that) {

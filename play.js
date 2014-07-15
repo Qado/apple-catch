@@ -10,8 +10,11 @@ var play_state = {
     this.bush_collision_group = game.physics.p2.createCollisionGroup();
     this.ground_collision_group = game.physics.p2.createCollisionGroup();
     this.apple_collision_group = game.physics.p2.createCollisionGroup();
+    this.enemy_collision_group = game.physics.p2.createCollisionGroup();
+
     this.newton_material = game.physics.p2.createMaterial('newton_material');
     this.bush_material = game.physics.p2.createMaterial('bush_material');
+    this.ground_material = game.physics.p2.createMaterial('ground_material');
     
     game.physics.p2.updateBoundsCollisionGroup();
     game.physics.p2.gravity.y = 2000;
@@ -29,13 +32,17 @@ var play_state = {
     
     this.ground = game.add.sprite(800, 850, 'background_0');
     game.physics.p2.enable(this.ground);
+    this.ground.physicsBodyType = Phaser.Physics.P2JS
+    this.ground.body.mass = 1e7;
     this.ground.body.setCollisionGroup(this.ground_collision_group);
+    this.ground.body.setMaterial(this.ground_material);
     this.ground.body.static = true;
     this.ground.anchor.setTo(0.5, 0.5);
 
     this.left_bush = game.add.sprite(-50, 700, 'big-bush');
     game.physics.p2.enable(this.left_bush);
-    this.left_bush.body.setCircle(100);
+    this.left_bush.physicsBodyType = Phaser.Physics.P2JS
+    this.left_bush.body.setCircle(150);
     this.left_bush.body.setCollisionGroup(this.bush_collision_group);
     this.left_bush.body.setMaterial(this.bush_material)
     this.left_bush.scale.x = 0.75;
@@ -44,7 +51,8 @@ var play_state = {
 
     this.right_bush = game.add.sprite(this.worldX + 50, 700, 'big-bush');
     game.physics.p2.enable(this.right_bush);
-    this.right_bush.body.setCircle(100);
+    this.right_bush.physicsBodyType = Phaser.Physics.P2JS
+    this.right_bush.body.setCircle(150);
     this.right_bush.body.setCollisionGroup(this.bush_collision_group);
     this.right_bush.body.setMaterial(this.bush_material)
     this.right_bush.scale.x = -0.75;
@@ -54,20 +62,21 @@ var play_state = {
     //this.newton.physicsBodyType = Phaser.Physics.P2JS;
     this.newton = game.add.sprite(800, 0, 'newton');
     game.physics.p2.enable(this.newton);
+    this.newton.physicsBodyType = Phaser.Physics.P2JS
     this.newton.body.setCollisionGroup(this.newton_collision_group);
     this.newton.body.setMaterial(this.newton_material)
     this.newton.speed = 750;
     this.newton.anchor.set(0.5, 0.5);
     this.newton.body.fixedRotation = true;
+    this.newton.body.mass = 175;
     this.newton.animations.add('walk', [0, 1, 2, 1], 15, true);
     this.newton.poisoned = false;
     //this.newton.collideWorldBounds = true;
     
     this.basket = game.add.sprite(this.newton.x, this.newton.y, 'basket');
-    this.basket.enableBody = true;
     game.physics.p2.enable(this.basket);
-    this.basket.body.setCollisionGroup(this.basket_collision_group);
     this.basket.physicsBodyType = Phaser.Physics.P2JS
+    this.basket.body.setCollisionGroup(this.basket_collision_group);
     this.basket.anchor.set(-0.15, -0.10);
     this.basket.body.fixedRotation = true;
     game.camera.follow(this.newton);
@@ -99,17 +108,30 @@ var play_state = {
     this.newton_dead = false;
     this.enemy = game.add.group();
     this.enemy.enableBody = true;
+    this.enemy.physicsBodyType = Phaser.Physics.P2JS;
+
 
     newton_cm = this.newton_contact_material;
     bush_cm = this.bush_contact_material;
+    ground_cm = this.ground_contact_material;
+    
     var newton_bush_contact_material = game.physics.p2.createContactMaterial(newton_cm, bush_cm);
-    newton_bush_contact_material.friction = 40;
-    newton_bush_contact_material.restitution = 40;
+    newton_bush_contact_material.friction = 0;
+    newton_bush_contact_material.restitution = 1e7;
     newton_bush_contact_material.stiffness = 1e7;
-    newton_bush_contact_material.relaxation = 5;
-    newton_bush_contact_material.frictionStiffness = 3;
-    newton_bush_contact_material.frictionRelaxation = 3;
-    newton_bush_contact_material.surfaceVelocity = 1;
+    newton_bush_contact_material.relaxation = 3;
+    newton_bush_contact_material.frictionStiffness = 0;
+    newton_bush_contact_material.frictionRelaxation = 0;
+    newton_bush_contact_material.surfaceVelocity = 0;
+    
+    var newton_ground_contact_material = game.physics.p2.createContactMaterial(newton_cm, ground_cm);
+    newton_ground_contact_material.friction = 0;
+    newton_ground_contact_material.restitution = 0;
+    newton_ground_contact_material.stiffness = 0;
+    newton_ground_contact_material.relaxation = 0;
+    newton_ground_contact_material.frictionStiffness = 1e7;
+    newton_ground_contact_material.frictionRelaxation = 3;
+    newton_ground_contact_material.surfaceVelocity = 0;
     
     this.setnewtonGravity('day')
     this.ranges = game.add.group();
@@ -121,15 +143,24 @@ var play_state = {
    
     this.left_bush.body.collides(this.newton_collision_group);
     this.right_bush.body.collides(this.newton_collision_group);
-    this.newton.body.collides([this.ground_collision_group, this.bush_collision_group]);
+    this.newton.body.collides([this.ground_collision_group, this.bush_collision_group, this.enemy_collision_group]);
     this.ground.body.collides(this.newton_collision_group, this.registerNewtonGroundContact, this);
+    this.ground.body.collides(this.enemy_collision_group);
 
     apples.init(play_state);
-    //world_events.startRain(play_state);
+    world_events.startRain(play_state);
     //world_events.startNight(play_state);
-    enemy_events.spawnUFO(play_state);
+    enemy_events.spawnBeehive(play_state);
 
-    
+    if(this.enemy_events_state.raven == true){
+      this.raven.body.collides(this.ground_collision_group);
+    }
+    if(this.enemy_events_state.canonball == true){
+      this.canonball.body.collides(this.ground_collision_group);
+    }
+    if(this.enemy_events_state.UFO == true){
+      this.UFO.body.collides(this.ground_collision_group);
+    }
   },
   
   registerNewtonGroundContact: function(){
@@ -139,7 +170,7 @@ var play_state = {
   newtonJump: function(newton) {
 
     if(this.newton.touching_ground == true){
-        this.newton.body.velocity.y = -1500;
+        this.newton.body.velocity.y = -750;
     }
     this.newton.touching_ground = false;
   },

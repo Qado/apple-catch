@@ -14,6 +14,9 @@ var world_events = {
   },
 
   startRain: function(that){
+    that.darkness_2 = game.add.sprite(0, 0, 'black_screen');
+    that.darkness_2.alpha = 0;
+    game.add.tween(that.darkness_2).to( { alpha: 0.45 }, 5000, Phaser.Easing.Linear.None, true);
     that.rainEmitter = game.add.emitter( game.world.centerX, 0, 1000);
     that.rainEmitter.width = 1600;
     that.rainEmitter.makeParticles('rain');
@@ -36,7 +39,7 @@ var world_events = {
     game.add.tween(that.moon).to( { x: 800 }, 30000, Phaser.Easing.Circular.None, true);
     game.add.tween(that.moon).to( { y: 0 }, 30000, Phaser.Easing.Circular.None, true);
     that.world_events_state.night = true;
-
+    
     game.time.events.add(Phaser.Timer.SECOND * 65, this.startDay, that, that);
   },
 
