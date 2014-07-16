@@ -33,7 +33,7 @@ var load_state = {
       //Loading Spritesheets//
       game.load.spritesheet('coin', 'assets/images/sprites/coin.png', 32, 32);
       game.load.spritesheet('newton', 'assets/images/sprites/newton.png', 141, 254);
-      game.load.spritesheet('hedgehog', 'assets/images/sprites/hedgehog_spritesheet.png', 577, 327);
+      game.load.spritesheet('hedgehog', 'assets/images/sprites/hedgehog_spritesheet.png', 115, 65);
       game.load.spritesheet('beehive', 'assets/images/sprites/beehive_spritesheet.png', 122, 122);
       game.load.spritesheet('raven', 'assets/images/sprites/raven_spritesheet.png', 125, 134);
       game.load.spritesheet('egg', 'assets/images/sprites/raven_egg_spritesheet.png', 60, 92);

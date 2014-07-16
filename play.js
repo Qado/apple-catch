@@ -4,7 +4,9 @@ var play_state = {
     game.physics.startSystem(Phaser.Physics.P2JS);
     game.world.setBounds(0, 0, 1600, 900);
     game.physics.p2.setImpactEvents(true);
-    
+
+    this.minute = Math.floor(game.time.time / 60000) % 60;
+
     this.basket_collision_group = game.physics.p2.createCollisionGroup();
     this.newton_collision_group = game.physics.p2.createCollisionGroup();
     this.bush_collision_group = game.physics.p2.createCollisionGroup();
@@ -35,7 +37,7 @@ var play_state = {
     this.ground.physicsBodyType = Phaser.Physics.P2JS
     this.ground.body.mass = 1e7;
     this.ground.body.setCollisionGroup(this.ground_collision_group);
-    this.ground.body.setMaterial(this.ground_material);
+    //this.ground.body.setMaterial(this.ground_material);
     this.ground.body.static = true;
     this.ground.anchor.setTo(0.5, 0.5);
 
@@ -64,14 +66,13 @@ var play_state = {
     game.physics.p2.enable(this.newton);
     this.newton.physicsBodyType = Phaser.Physics.P2JS
     this.newton.body.setCollisionGroup(this.newton_collision_group);
-    this.newton.body.setMaterial(this.newton_material)
+    //this.newton.body.setMaterial(this.newton_material)
     this.newton.speed = 750;
     this.newton.anchor.set(0.5, 0.5);
     this.newton.body.fixedRotation = true;
     this.newton.body.mass = 175;
-    this.newton.animations.add('walk', [0, 1, 2, 1], 15, true);
+    this.newton.animations.add('walk', [0, 1, 2, 1], 15, false);
     this.newton.poisoned = false;
-    //this.newton.collideWorldBounds = true;
     
     this.basket = game.add.sprite(this.newton.x, this.newton.y, 'basket');
     game.physics.p2.enable(this.basket);
@@ -95,7 +96,7 @@ var play_state = {
 
     this.normal_theme = game.add.audio('theme-song');
     this.poison_theme = game.add.audio('poison-song');
-    //this.normal_theme.play();
+    this.normal_theme.play();
     
     this.red_score_sound = game.add.audio('red-score');
     this.green_score_sound = game.add.audio('green-score');
@@ -131,7 +132,7 @@ var play_state = {
     newton_ground_contact_material.relaxation = 0;
     newton_ground_contact_material.frictionStiffness = 1e7;
     newton_ground_contact_material.frictionRelaxation = 3;
-    newton_ground_contact_material.surfaceVelocity = 0;
+    newton_ground_contact_material.surfaceVelocity = 1000000;
     
     this.setnewtonGravity('day')
     this.ranges = game.add.group();
@@ -148,9 +149,11 @@ var play_state = {
     this.ground.body.collides(this.enemy_collision_group);
 
     apples.init(play_state);
-    world_events.startRain(play_state);
-    //world_events.startNight(play_state);
+    //world_events.startRain(play_state);
+    world_events.startNight(play_state);
     enemy_events.spawnBeehive(play_state);
+    enemy_events.spawnHedgehog(play_state);
+    enemy_events.spawnCanonBall(play_state);
 
     if(this.enemy_events_state.raven == true){
       this.raven.body.collides(this.ground_collision_group);
@@ -271,15 +274,18 @@ var play_state = {
       this.control();
     }
 
-    filters.updateFilter(play_state);
-    apples.updateApple(play_state);
-
-    /*if(this.enemy_events_state.UFO_beam == true){
-      game.physics.p2.overlap(this.newton, this.lightEmitter, this.beamUp, null, this);
-    }*/
+    now_minute = Math.floor(game.time.time / 60000) % 60;
+    level = now_minute - this.minute + 1
     
+    enemy_events.updateCanonBall(play_state, level); 
+    console.log(level);
     enemy_events.updateRaven(play_state);
     enemy_events.updateUFO(play_state);
+    filters.updateFilter(play_state);
+    apples.updateApple(play_state);
+    if(this.enemy_events_state.hedgehog == true) {
+      enemy_events.updateHedgehog(play_state);
+    }
   },
   
   alterNewtonState: function(apple){

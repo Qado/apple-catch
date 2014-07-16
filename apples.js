@@ -137,7 +137,6 @@ var apples = {
     //that.apple.body.kinematic = true;
     apple.body.data.gravityScale = 0;
     apple.body.data.motionState = 1;
-    apple.body.mass = 1; 
   },
 
   growApple: function(that) {

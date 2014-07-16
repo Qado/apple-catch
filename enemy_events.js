@@ -15,26 +15,48 @@ var enemy_events = {
     that.UFO_round = 0;
     that.UFO_move = false;
  
-    that.canon_ball = game.add.sprite(0, 700, 'canon-ball');
-    that.canon_ball.scale.y = 0.001;
-    that.canon_ball.scale.x = 0.001;
 
   },
 
-  spawnHedgehog: function(that){
+  randomizer: function(min, max, exclude){
+    //returns a random number from the above range
+    function pickRandom(min, max){
+      return Math.round(Math.random() * (max - min) + min)
+    }
+    random_number = pickRandom(min, max);
+    
+    //picks a random number again if there is an exclusion.
+    while(random_number == exclude){
+      random_number = pickRandom(min, max);
+    }
+    return random_number
+  },
+
+  spawnHedgehog: function(that, level){
+    var level = level || 1;
     that.enemy_events_state.hedgehog = true;
-    that.hedgehog = that.enemy.create(0, 600, 'hedgehog');
+    that.hedgehog = that.enemy.create(0, 700, 'hedgehog');
+    game.world.addAt(that.hedgehog, 7);
+    that.hedgehog.factor = this.randomizer(-1, 1, 0);
+    that.hedgehog.scale.x = that.hedgehog.factor;
+    that.hedgehog.body.x = Math.abs((that.hedgehog.factor * that.worldX) - that.worldX) / 2;
+    that.hedgehog.speed = Math.log(level * 2) * 450;
     game.physics.p2.enable(that.hedgehog);
     that.hedgehog.body.collides(that.ground_collision_group);
     that.hedgehog.body.setCollisionGroup(that.enemy_collision_group);
-    that.hedgehog.body.gravity.y = 700;
-    that.hedgehog.body.bounce.y = 0.2;
-    that.hedgehog.scale.x = 0.3;
-    that.hedgehog.scale.y = 0.3;
-    that.hedgehog.animations.add('walk', [0, 1, 2, 1], 20, true);
+    that.hedgehog.body.collides([that.ground_collision_group, that.newton_collision_group]);
+    that.hedgehog.body.fixedBody = true;
+    that.hedgehog.body.mass = 65;
+    that.hedgehog.body.force = 100000;
+    that.hedgehog.body.inertia = 400000;
+    that.hedgehog.body.collideWorldBounds = false;
+    that.hedgehog.animations.add('walk', [0, 1, 2, 1], (level * 20), true);
     that.hedgehog.animations.play('walk');
-    game.add.tween(that.hedgehog).to( { x: 1600 }, 5000, Phaser.Easing.Linear.Out, true);
-    game.time.events.add(Phaser.Timer.SECOND * 7, this.__killHedgehog, this, that);
+    game.time.events.add(Phaser.Timer.SECOND * 28, this.__killHedgehog, this, that);
+  },
+
+  updateHedgehog: function(that) {
+    that.hedgehog.body.velocity.x += that.hedgehog.factor * that.hedgehog.speed;
   },
 
   __killHedgehog: function(that){
@@ -46,7 +68,7 @@ var enemy_events = {
     that.enemy_events_state.beehive = true;
     that.beehive = that.enemy.create(400, 300, 'beehive');
     game.physics.p2.enable(that.beehive);
-    that.beehive.body.setCircle(100);
+    that.beehive.body.setCircle(50);
     that.beehive.body.setCollisionGroup(that.enemy_collision_group);
     that.beehive.body.collides([that.ground_collision_group, that.newton_collision_group]);
     that.beehive.body.data.gravityScale = 0;
@@ -54,8 +76,6 @@ var enemy_events = {
     that.beehive.fixedBody = true;
     that.beehive.alpha = 1;
     that.beehive.anchor.set(0.5, 0);
-    that.beehive.scale.x = 0.2;
-    that.beehive.scale.y = 0.2;
     that.beehive.animations.add('buzz', [0, 1, 2, 3, 2, 1], 10, true);
     that.beehive.animations.play('buzz');
     game.add.tween(that.beehive.scale).to( { x: 1 }, 3500, Phaser.Easing.Linear.Out, true)
@@ -134,13 +154,20 @@ var enemy_events = {
    that.yolk.kill();
    },
 
-  spawnCanonBall: function(that) {
-    that.canon_ball.x = that.newton.x;
+  spawnCanonBall: function(that, level) {
+    var level = level || 1;
+    that.enemy_events_state.canon_ball = true;
+    that.canon_ball = game.add.sprite(0, 700, 'canon-ball');
+    game.world.addAt(that.canon_ball, 0);
+    that.canon_ball.scale.y = 0.001;
+    that.canon_ball.scale.x = 0.001;
+    that.canon_ball.kill_time = Math.abs(Math.round(Math.sin(level) * 30));
+    that.canon_ball.x = this.randomizer(0, that.worldX);
     that.canon_fire.play();
-    game.add.tween(that.canon_ball).to( { y: 200 }, 7500, Phaser.Easing.Linear.Out, true);
-    game.add.tween(that.canon_ball.scale).to( { x: 0.25 }, 7500, Phaser.Easing.Linear.Out, true);
-    game.add.tween(that.canon_ball.scale).to( { y: 0.25 }, 7500, Phaser.Easing.Linear.Out, true);
-    game.time.events.add(Phaser.Timer.SECOND * 8.5, this.__dropCanonBall, this, that);
+    game.add.tween(that.canon_ball).to( { y: -100 }, 8500, Phaser.Easing.Linear.Out, true);
+    game.add.tween(that.canon_ball.scale).to( { x: 0.5 }, 10000, Phaser.Easing.Linear.Out, true);
+    game.add.tween(that.canon_ball.scale).to( { y: 0.5 }, 10000, Phaser.Easing.Linear.Out, true);
+    game.time.events.add(Phaser.Timer.SECOND * 11.5, this.__dropCanonBall, this, that);
   },
 
   __dropCanonBall: function(that) {
@@ -149,19 +176,28 @@ var enemy_events = {
     that.shadow.scale.y = 0.1;
     that.shadow.alpha = 0.1;
     that.shadow.anchor.set(0.5, 0.5);
-    game.add.tween(that.shadow.scale).to( { x: 1.9 }, 1000, Phaser.Easing.Linear.Out, true);  
-    game.add.tween(that.shadow.scale).to( { y: 1.9 }, 1000, Phaser.Easing.Linear.Out, true);  
-    game.add.tween(that.shadow).to( { alpha: 1 }, 1000, Phaser.Easing.Linear.Out, true);  
-    
-    game.add.tween(that.shadow.scale).to( { x: 1.7 }, 1000, Phaser.Easing.Linear.Out, true);  
-    game.add.tween(that.shadow.scale).to( { y: 1.7 }, 1000, Phaser.Easing.Linear.Out, true);  
-    game.time.events.add(Phaser.Timer.SECOND * 1, this.__killShadow, this, that);
+    game.add.tween(that.shadow.scale).to( { x: 2 }, 1000, Phaser.Easing.Linear.Out, true);  
+    game.add.tween(that.shadow.scale).to( { y: 2 }, 1000, Phaser.Easing.Linear.Out, true);  
+    game.add.tween(that.shadow).to( { alpha: 0.5 }, 1000, Phaser.Easing.Linear.Out, true);  
+    game.time.events.add(Phaser.Timer.SECOND * 1.5, this.__killShadow, this, that);
     that.big_canon_ball = that.enemy.create(that.canon_ball.x, -1000, 'canon-ball');
+    game.physics.p2.enable(that.big_canon_ball);
     that.big_canon_ball.anchor.set(0.5, 0.5);
+    that.big_canon_ball.body.mass = 5e10
     that.big_canon_ball.scale.x = 2;
     that.big_canon_ball.scale.y = 2;
     game.add.tween(that.big_canon_ball).to( { y: 1100 }, 1500, Phaser.Easing.Linear.Out, true);
-    game.time.events.add(Phaser.Timer.SECOND * 2.5, this.__killCanonBall, this, that);
+    game.time.events.add(Phaser.Timer.SECOND * that.canon_ball.kill_time, this.__killCanonBall, this, that);
+  },
+
+  updateCanonBall: function(that, level) {
+    if(that.enemy_events_state.canon_ball == false){
+      this.spawnCanonBall(that, level);
+    }
+      var style = { font: "25px Arial", fill: "#ff0044", align: "center" };
+      var t = game.add.text(32, 32, 'Level: ' + level, style);
+      var u = game.add.text(32, 64, 'SpawnTime: ' + that.canon_ball.kill_time, style);
+
   },
 
   __killShadow: function(that){
@@ -174,6 +210,7 @@ var enemy_events = {
     that.canon_ball.kill();
     that.big_canon_ball.kill();
     that.shadow.kill();
+    that.enemy_events_state.canon_ball = false;
   },
 
   spawnUFO: function(that) {
