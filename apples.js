@@ -23,7 +23,7 @@ var apples = {
   
 
   updateApple: function(that) {
-    if(that.apple_count < 3){
+    if(that.apple_count < 12){
       var pos_x = Math.abs(Math.random() * (1600 - 100)) + 50;
       var pos_y = (Math.random() * 300) + 150
       this.spawnApple(pos_x, pos_y, that);
@@ -85,7 +85,6 @@ var apples = {
   },
 
   collectApple: function(apple, basket) {
-    console.log(apple);
     apple = apple.sprite;
     that = apple.context;
     apple.sound.play();

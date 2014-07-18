@@ -6,6 +6,14 @@ var play_state = {
     game.physics.p2.setImpactEvents(true);
 
     this.minute = Math.floor(game.time.time / 60000) % 60;
+    
+    this.enemy = game.add.group();
+    this.enemy.enableBody = true;
+    this.enemy.physicsBodyType = Phaser.Physics.P2JS;
+    
+    this.effects = game.add.group();
+    this.effects.enableBody = true;
+
 
     this.basket_collision_group = game.physics.p2.createCollisionGroup();
     this.newton_collision_group = game.physics.p2.createCollisionGroup();
@@ -96,7 +104,7 @@ var play_state = {
 
     this.normal_theme = game.add.audio('theme-song');
     this.poison_theme = game.add.audio('poison-song');
-    this.normal_theme.play();
+    //this.normal_theme.play();
     
     this.red_score_sound = game.add.audio('red-score');
     this.green_score_sound = game.add.audio('green-score');
@@ -107,10 +115,6 @@ var play_state = {
     this.canon_fire = game.add.audio('canon-fire');
 
     this.newton_dead = false;
-    this.enemy = game.add.group();
-    this.enemy.enableBody = true;
-    this.enemy.physicsBodyType = Phaser.Physics.P2JS;
-
 
     newton_cm = this.newton_contact_material;
     bush_cm = this.bush_contact_material;
@@ -146,14 +150,17 @@ var play_state = {
     this.right_bush.body.collides(this.newton_collision_group);
     this.newton.body.collides([this.ground_collision_group, this.bush_collision_group, this.enemy_collision_group]);
     this.ground.body.collides(this.newton_collision_group, this.registerNewtonGroundContact, this);
-    this.ground.body.collides(this.enemy_collision_group);
+    this.ground.body.collides([this.enemy_collision_group, this.apple_collision_group]);
 
     apples.init(play_state);
     //world_events.startRain(play_state);
-    world_events.startNight(play_state);
+    //world_events.startNight(play_state);
+    //for(i = 0; i < 15; i++){
+    //  world_events.startClouds(play_state);
+    //}
     enemy_events.spawnBeehive(play_state);
-    enemy_events.spawnHedgehog(play_state);
-    enemy_events.spawnCanonBall(play_state);
+    //enemy_events.spawnHedgehog(play_state);
+    //enemy_events.spawnUFO(play_state);
 
     if(this.enemy_events_state.raven == true){
       this.raven.body.collides(this.ground_collision_group);
@@ -162,7 +169,7 @@ var play_state = {
       this.canonball.body.collides(this.ground_collision_group);
     }
     if(this.enemy_events_state.UFO == true){
-      this.UFO.body.collides(this.ground_collision_group);
+      //this.UFO.body.collides(this.ground_collision_group);
     }
   },
   
@@ -275,10 +282,9 @@ var play_state = {
     }
 
     now_minute = Math.floor(game.time.time / 60000) % 60;
-    level = now_minute - this.minute + 1
+    level = now_minute - this.minute + 5
     
     enemy_events.updateCanonBall(play_state, level); 
-    console.log(level);
     enemy_events.updateRaven(play_state);
     enemy_events.updateUFO(play_state);
     filters.updateFilter(play_state);
@@ -286,6 +292,7 @@ var play_state = {
     if(this.enemy_events_state.hedgehog == true) {
       enemy_events.updateHedgehog(play_state);
     }
+    world_events.updateCloud(play_state);
   },
   
   alterNewtonState: function(apple){

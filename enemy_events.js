@@ -157,21 +157,23 @@ var enemy_events = {
   spawnCanonBall: function(that, level) {
     var level = level || 1;
     that.enemy_events_state.canon_ball = true;
-    that.canon_ball = game.add.sprite(0, 700, 'canon-ball');
-    game.world.addAt(that.canon_ball, 0);
+    that.canon_ball = that.effects.create(0, 700, 'canon-ball');
+    game.physics.p2.enable(that.canon_ball);
+    game.world.addAt(that.canon_ball, 2);
+    that.canon_ball.x = this.randomizer(0, that.worldX);
     that.canon_ball.scale.y = 0.001;
     that.canon_ball.scale.x = 0.001;
     that.canon_ball.kill_time = Math.abs(Math.round(Math.sin(level) * 30));
-    that.canon_ball.x = this.randomizer(0, that.worldX);
     that.canon_fire.play();
     game.add.tween(that.canon_ball).to( { y: -100 }, 8500, Phaser.Easing.Linear.Out, true);
+    game.add.tween(that.canon_ball).to( { x: that.newton.body.x }, 8500, Phaser.Easing.Linear.Out, true);
     game.add.tween(that.canon_ball.scale).to( { x: 0.5 }, 10000, Phaser.Easing.Linear.Out, true);
     game.add.tween(that.canon_ball.scale).to( { y: 0.5 }, 10000, Phaser.Easing.Linear.Out, true);
     game.time.events.add(Phaser.Timer.SECOND * 11.5, this.__dropCanonBall, this, that);
   },
 
   __dropCanonBall: function(that) {
-    that.shadow = game.add.sprite(that.canon_ball.x, 850, 'shadow');
+    that.shadow = game.add.sprite(that.canon_ball.body.x, 850, 'shadow');
     that.shadow.scale.x = 0.1;
     that.shadow.scale.y = 0.1;
     that.shadow.alpha = 0.1;
@@ -180,8 +182,9 @@ var enemy_events = {
     game.add.tween(that.shadow.scale).to( { y: 2 }, 1000, Phaser.Easing.Linear.Out, true);  
     game.add.tween(that.shadow).to( { alpha: 0.5 }, 1000, Phaser.Easing.Linear.Out, true);  
     game.time.events.add(Phaser.Timer.SECOND * 1.5, this.__killShadow, this, that);
-    that.big_canon_ball = that.enemy.create(that.canon_ball.x, -1000, 'canon-ball');
+    that.big_canon_ball = that.enemy.create(that.canon_ball.body.x, -1000, 'canon-ball');
     game.physics.p2.enable(that.big_canon_ball);
+    game.world.addAt(that.big_canon_ball, 17);
     that.big_canon_ball.anchor.set(0.5, 0.5);
     that.big_canon_ball.body.mass = 5e10
     that.big_canon_ball.scale.x = 2;
@@ -194,10 +197,6 @@ var enemy_events = {
     if(that.enemy_events_state.canon_ball == false){
       this.spawnCanonBall(that, level);
     }
-      var style = { font: "25px Arial", fill: "#ff0044", align: "center" };
-      var t = game.add.text(32, 32, 'Level: ' + level, style);
-      var u = game.add.text(32, 64, 'SpawnTime: ' + that.canon_ball.kill_time, style);
-
   },
 
   __killShadow: function(that){
@@ -207,10 +206,12 @@ var enemy_events = {
   },
 
   __killCanonBall: function(that) {
-    that.canon_ball.kill();
-    that.big_canon_ball.kill();
-    that.shadow.kill();
+    that.canon_ball.destroy();
+    that.big_canon_ball.destroy();
+    that.shadow.destroy();
     that.enemy_events_state.canon_ball = false;
+    console.log(that.canon_ball);
+    console.log(that.big_canon_ball);
   },
 
   spawnUFO: function(that) {

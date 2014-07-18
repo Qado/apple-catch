@@ -29,6 +29,11 @@ var load_state = {
       game.load.image('corona', 'assets/images/sprites/phaser_particle.png');
       game.load.image('blue-light', 'assets/images/sprites/ufo_blue_light.png');
       game.load.image('apple-range', 'assets/images/sprites/apple_range.png');
+      game.load.image('rainbow', 'assets/images/sprites/rainbow.png');
+      game.load.image('sun', 'assets/images/sprites/sun.png');
+      game.load.image('cloud_1', 'assets/images/sprites/cloud_1.png');
+      game.load.image('cloud_2', 'assets/images/sprites/cloud_2.png');
+      game.load.image('cloud_3', 'assets/images/sprites/cloud_3.png');
 
       //Loading Spritesheets//
       game.load.spritesheet('coin', 'assets/images/sprites/coin.png', 32, 32);
