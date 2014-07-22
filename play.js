@@ -4,6 +4,10 @@ var play_state = {
     game.physics.startSystem(Phaser.Physics.P2JS);
     game.world.setBounds(0, 0, 1600, 900);
     game.physics.p2.setImpactEvents(true);
+    game.physics.p2.updateBoundsCollisionGroup();
+    game.physics.p2.gravity.y = 2000;
+    this.worldX = game.world.width;
+    this.worldY = game.world.height;
 
     this.minute = Math.floor(game.time.time / 60000) % 60;
     
@@ -22,16 +26,6 @@ var play_state = {
     this.apple_collision_group = game.physics.p2.createCollisionGroup();
     this.enemy_collision_group = game.physics.p2.createCollisionGroup();
 
-    this.newton_material = game.physics.p2.createMaterial('newton_material');
-    this.bush_material = game.physics.p2.createMaterial('bush_material');
-    this.ground_material = game.physics.p2.createMaterial('ground_material');
-    
-    game.physics.p2.updateBoundsCollisionGroup();
-    game.physics.p2.gravity.y = 2000;
-
-    this.worldX = game.world.width;
-    this.worldY = game.world.height;
-
     world_events.init(play_state);
     enemy_events.init(play_state);
     filters.init(play_state);
@@ -45,7 +39,6 @@ var play_state = {
     this.ground.physicsBodyType = Phaser.Physics.P2JS
     this.ground.body.mass = 1e7;
     this.ground.body.setCollisionGroup(this.ground_collision_group);
-    //this.ground.body.setMaterial(this.ground_material);
     this.ground.body.static = true;
     this.ground.anchor.setTo(0.5, 0.5);
 
@@ -69,12 +62,10 @@ var play_state = {
     this.right_bush.scale.y = 0.75
     this.right_bush.body.static = true;
 
-    //this.newton.physicsBodyType = Phaser.Physics.P2JS;
     this.newton = game.add.sprite(800, 0, 'newton');
     game.physics.p2.enable(this.newton);
     this.newton.physicsBodyType = Phaser.Physics.P2JS
     this.newton.body.setCollisionGroup(this.newton_collision_group);
-    //this.newton.body.setMaterial(this.newton_material)
     this.newton.speed = 750;
     this.newton.anchor.set(0.5, 0.5);
     this.newton.body.fixedRotation = true;
@@ -116,28 +107,6 @@ var play_state = {
 
     this.newton_dead = false;
 
-    newton_cm = this.newton_contact_material;
-    bush_cm = this.bush_contact_material;
-    ground_cm = this.ground_contact_material;
-    
-    var newton_bush_contact_material = game.physics.p2.createContactMaterial(newton_cm, bush_cm);
-    newton_bush_contact_material.friction = 0;
-    newton_bush_contact_material.restitution = 1e7;
-    newton_bush_contact_material.stiffness = 1e7;
-    newton_bush_contact_material.relaxation = 3;
-    newton_bush_contact_material.frictionStiffness = 0;
-    newton_bush_contact_material.frictionRelaxation = 0;
-    newton_bush_contact_material.surfaceVelocity = 0;
-    
-    var newton_ground_contact_material = game.physics.p2.createContactMaterial(newton_cm, ground_cm);
-    newton_ground_contact_material.friction = 0;
-    newton_ground_contact_material.restitution = 0;
-    newton_ground_contact_material.stiffness = 0;
-    newton_ground_contact_material.relaxation = 0;
-    newton_ground_contact_material.frictionStiffness = 1e7;
-    newton_ground_contact_material.frictionRelaxation = 3;
-    newton_ground_contact_material.surfaceVelocity = 1000000;
-    
     this.setnewtonGravity('day')
     this.ranges = game.add.group();
     this.ranges.enableBody = true;
@@ -153,12 +122,9 @@ var play_state = {
     this.ground.body.collides([this.enemy_collision_group, this.apple_collision_group]);
 
     apples.init(play_state);
-    //world_events.startRain(play_state);
-    //world_events.startNight(play_state);
-    //for(i = 0; i < 15; i++){
-    //  world_events.startClouds(play_state);
-    //}
-    enemy_events.spawnBeehive(play_state);
+    world_events.startStorm(play_state);
+    world_events.startNight(play_state);
+    //enemy_events.spawnBeehive(play_state);
     //enemy_events.spawnHedgehog(play_state);
     //enemy_events.spawnUFO(play_state);
 
@@ -303,7 +269,7 @@ var play_state = {
       game.add.tween(this.marble).to( { alpha: 0.75 }, 3000, Phaser.Easing.Linear.Out, true);
       this.apple_gravity_scale = 0.1;
       this.normal_theme.pause();
-      this.poison_theme.play();
+      //this.poison_theme.play();
     } else {
       this.newton.poisoned = false;
       game.add.tween(this.marble).to( { alpha: 0 }, 3000, Phaser.Easing.Linear.Out, true);
