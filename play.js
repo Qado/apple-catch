@@ -2,6 +2,7 @@ var play_state = {
 
   create: function() {
     game.physics.startSystem(Phaser.Physics.P2JS);
+    //game.physics.startSystem(Phaser.Physics.ARCADE);
     game.world.setBounds(0, 0, 1600, 900);
     game.physics.p2.setImpactEvents(true);
     game.physics.p2.updateBoundsCollisionGroup();
@@ -18,17 +19,25 @@ var play_state = {
     this.effects = game.add.group();
     this.effects.enableBody = true;
 
+    this.flower_data;
+    this.flower_pick;
+    this.apple_data;
+    this.apple_pick;
 
     this.basket_collision_group = game.physics.p2.createCollisionGroup();
     this.newton_collision_group = game.physics.p2.createCollisionGroup();
     this.bush_collision_group = game.physics.p2.createCollisionGroup();
     this.ground_collision_group = game.physics.p2.createCollisionGroup();
     this.apple_collision_group = game.physics.p2.createCollisionGroup();
+    this.range_collision_group = game.physics.p2.createCollisionGroup();
+    this.flower_collision_group = game.physics.p2.createCollisionGroup();
+    this.flower_bed_collision_group = game.physics.p2.createCollisionGroup();
     this.enemy_collision_group = game.physics.p2.createCollisionGroup();
 
     world_events.init(play_state);
     enemy_events.init(play_state);
     filters.init(play_state);
+    flowers.init(play_state);
 
     this.background_3 = game.add.tileSprite(0, 0, 1600, 900, 'background_3');
     this.background_2 = game.add.tileSprite(0, 0, 1600, 900, 'background_2');
@@ -74,8 +83,9 @@ var play_state = {
     this.newton.poisoned = false;
     
     this.basket = game.add.sprite(this.newton.x, this.newton.y, 'basket');
+    this.basket.enableBody = true;
     game.physics.p2.enable(this.basket);
-    this.basket.physicsBodyType = Phaser.Physics.P2JS
+    this.basket.physicsBodyType = Phaser.Physics.P2JS;
     this.basket.body.setCollisionGroup(this.basket_collision_group);
     this.basket.anchor.set(-0.15, -0.10);
     this.basket.body.fixedRotation = true;
@@ -118,12 +128,14 @@ var play_state = {
     this.left_bush.body.collides(this.newton_collision_group);
     this.right_bush.body.collides(this.newton_collision_group);
     this.newton.body.collides([this.ground_collision_group, this.bush_collision_group, this.enemy_collision_group]);
+    this.basket.body.collides(this.apple_collision_group);
     this.ground.body.collides(this.newton_collision_group, this.registerNewtonGroundContact, this);
     this.ground.body.collides([this.enemy_collision_group, this.apple_collision_group]);
 
     apples.init(play_state);
-    world_events.startStorm(play_state);
+    //world_events.startStorm(play_state);
     world_events.startNight(play_state);
+    flowers.spawnFlower(play_state);
     //enemy_events.spawnBeehive(play_state);
     //enemy_events.spawnHedgehog(play_state);
     //enemy_events.spawnUFO(play_state);
@@ -258,7 +270,7 @@ var play_state = {
     if(this.enemy_events_state.hedgehog == true) {
       enemy_events.updateHedgehog(play_state);
     }
-    world_events.updateCloud(play_state);
+    world_events.updateWorld(play_state);
   },
   
   alterNewtonState: function(apple){
@@ -274,16 +286,12 @@ var play_state = {
       this.newton.poisoned = false;
       game.add.tween(this.marble).to( { alpha: 0 }, 3000, Phaser.Easing.Linear.Out, true);
       this.newton.poison_factor = 2;
-      game.time.events.add(Phaser.Timer.SECOND * 3.5, this.killFilter, this);
+      game.time.events.add(Phaser.Timer.SECOND * 3.5, filters.killFilter, this);
       this.apple_gravity_scale = 0.5;
       this.poison_theme.pause();
       this.normal_theme.resume();
     }
 
     this.newton.speed = this.newton.speed * -1;
-  },
-
-  killFilter: function() {
-    this.marble_background.filters = null;
-  },
+  }
 };

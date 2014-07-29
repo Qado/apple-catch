@@ -18,26 +18,12 @@ var enemy_events = {
 
   },
 
-  randomizer: function(min, max, exclude){
-    //returns a random number from the above range
-    function pickRandom(min, max){
-      return Math.round(Math.random() * (max - min) + min)
-    }
-    random_number = pickRandom(min, max);
-    
-    //picks a random number again if there is an exclusion.
-    while(random_number == exclude){
-      random_number = pickRandom(min, max);
-    }
-    return random_number
-  },
-
   spawnHedgehog: function(that, level){
     var level = level || 1;
     that.enemy_events_state.hedgehog = true;
     that.hedgehog = that.enemy.create(0, 700, 'hedgehog');
     game.world.addAt(that.hedgehog, 7);
-    that.hedgehog.factor = this.randomizer(-1, 1, 0);
+    that.hedgehog.factor = utilities.randomizer(-1, 1, 0);
     that.hedgehog.scale.x = that.hedgehog.factor;
     that.hedgehog.body.x = Math.abs((that.hedgehog.factor * that.worldX) - that.worldX) / 2;
     that.hedgehog.speed = Math.log(level * 2) * 450;
@@ -160,7 +146,7 @@ var enemy_events = {
     that.canon_ball = that.effects.create(0, 700, 'canon-ball');
     game.physics.p2.enable(that.canon_ball);
     game.world.addAt(that.canon_ball, 2);
-    that.canon_ball.x = this.randomizer(0, that.worldX);
+    that.canon_ball.x = utilities.randomizer(0, that.worldX);
     that.canon_ball.scale.y = 0.001;
     that.canon_ball.scale.x = 0.001;
     that.canon_ball.kill_time = Math.abs(Math.round(Math.sin(level) * 30));

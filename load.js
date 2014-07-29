@@ -65,6 +65,17 @@ var load_state = {
       game.load.spritesheet('egg', 'assets/images/sprites/enemies/raven/raven_egg_spritesheet.png', 60, 92);
       game.load.image('yolk', 'assets/images/sprites/enemies/raven/egg_yolk.png');
 
+      //Flowers//
+      game.load.image('flower_1', 'assets/images/sprites/flowers/white_daisy.png');
+      game.load.image('flower_2', 'assets/images/sprites/flowers/pink_tulip.png');
+      game.load.image('flower_3', 'assets/images/sprites/flowers/red_poppy.png');
+      game.load.image('flower_4', 'assets/images/sprites/flowers/yellow_lily.png');
+      game.load.image('flower_5', 'assets/images/sprites/flowers/blue_geranium.png');
+      game.load.image('flower_6', 'assets/images/sprites/flowers/violet.png');
+      game.load.image('mushroom_1', 'assets/images/sprites/flowers/mushroom.png');
+      game.load.image('mushroom_2', 'assets/images/sprites/flowers/glow_mushroom.png');
+      game.load.image('flower_bed_1_1', 'assets/images/sprites/flowers/flower_bed_1_1.png');
+
       //Loading Audio//
       game.load.audio('theme-song', 'assets/sounds/game_theme.mp3');
       game.load.audio('red-score', 'assets/sounds/red_sound.wav');
