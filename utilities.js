@@ -12,5 +12,20 @@ var utilities  = {
     }
     return random_number
   },
+  
+  setPatchPosition: function(patch){
+    
+    var xmin = patch.xmin;
+    var xmax = patch.xmax;
+    var ymin = patch.ymin;
+    var ymax = patch.ymax;
 
+    var xpos = this.randomizer(xmin, xmax);
+    var ypos = this.randomizer(ymin, ymax);
+    return {'x': xpos, 'y': ypos}
+  },
+
+  fetchContext: function(){
+    return play_state;
+  }
 };

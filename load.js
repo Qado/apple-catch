@@ -19,7 +19,6 @@ var load_state = {
       game.load.image('rotten-apple', 'assets/images/sprites/apples/rotten-apple.png');
       game.load.image('golden-apple', 'assets/images/sprites/apples/golden-apple.png');
       game.load.image('poisoned-apple', 'assets/images/sprites/apples/poisoned-apple.png');
-      game.load.image('apple-range', 'assets/images/sprites/apples/apple_range.png');
       
       //Newton//
       game.load.image('basket', 'assets/images/sprites/newton/basket.png');
@@ -27,6 +26,11 @@ var load_state = {
       
       //Bushes//
       game.load.image('big-bush', 'assets/images/sprites/bushes/big_bush.png');
+      game.load.image('leaf_1', 'assets/images/sprites/bushes/leaf_1.png');
+      game.load.image('leaf_2', 'assets/images/sprites/bushes/leaf_2.png');
+      game.load.image('leaf_3', 'assets/images/sprites/bushes/leaf_3.png');
+      game.load.image('leaf_4', 'assets/images/sprites/bushes/leaf_4.png');
+      game.load.image('leaf_5', 'assets/images/sprites/bushes/leaf_5.png');
       
       //Weather//
       game.load.image('black_screen', 'assets/images/sprites/weather/dark.png');
@@ -43,6 +47,7 @@ var load_state = {
       //Canon Ball//
       game.load.image('canon-ball', 'assets/images/sprites/enemies/canon_ball/canon_ball.png');
       game.load.image('shadow', 'assets/images/sprites/enemies/canon_ball/canon_ball_shadow.png');
+      game.load.image('canon_ball_vertical_shadow', 'assets/images/sprites/enemies/canon_ball/canon_ball_vertical_shadow.png');
       
       //UFO//
       game.load.image('ufo-vertical-shadow', 'assets/images/sprites/enemies/ufo/ufo_vertical_shadow.png');
@@ -74,7 +79,6 @@ var load_state = {
       game.load.image('flower_6', 'assets/images/sprites/flowers/violet.png');
       game.load.image('mushroom_1', 'assets/images/sprites/flowers/mushroom.png');
       game.load.image('mushroom_2', 'assets/images/sprites/flowers/glow_mushroom.png');
-      game.load.image('flower_bed_1_1', 'assets/images/sprites/flowers/flower_bed_1_1.png');
 
       //Loading Audio//
       game.load.audio('theme-song', 'assets/sounds/game_theme.mp3');
@@ -91,6 +95,7 @@ var load_state = {
       game.load.audio('thunder_3', 'assets/sounds/thunder_3.wav');
       game.load.audio('thunder_4', 'assets/sounds/thunder_4.wav');
       game.load.audio('rain', 'assets/sounds/rain.wav');
+      game.load.audio('bush_rustle', 'assets/sounds/bush_rustle.wav');
     },
 
     create: function() {

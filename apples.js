@@ -10,6 +10,12 @@ var apples = {
     that.apples.enableBody = true;
     that.apples.physicsBodyType = Phaser.Physics.P2JS;
 
+    that.red_score_sound = game.add.audio('red-score');
+    that.green_score_sound = game.add.audio('green-score');
+    that.golden_score_sound = game.add.audio('golden-score');
+    that.poison_sound = game.add.audio('poison-sound');
+                
+
     that.apple_data = {
       '1': {
         'type': 'red-apple',
@@ -43,6 +49,33 @@ var apples = {
       }
     };
 
+    that.apple_patches = {
+      '1': {
+        'xmin': 100,
+        'ymin': 185,
+        'xmax': 325,
+        'ymax': 400
+      },
+      '2': {
+        'xmin': 460,
+        'ymin': 210,
+        'xmax': 700,
+        'ymax': 420
+      },
+      '3': {
+        'xmin': 890,
+        'ymin': 200,
+        'xmax': 1110,
+        'ymax': 420
+      },
+      '4': {
+        'xmin': 1250,
+        'ymin': 175,
+        'xmax': 1475,
+        'ymax': 400
+      }
+    };
+
     that.score_text = game.add.text(65, 10, 'x 0');
     that.score_text.font = 'Arial';
     that.score_text.fontSize = 35;
@@ -54,31 +87,30 @@ var apples = {
     that.basket.body.collides(that.apple_collision_group);
   },
   
-
   updateApple: function(that) {
-    if(that.apple_count < 20){
+    if(that.apple_count < 10){
       this.spawnApple(that);
     }
   },
 
   spawnApple: function(that) {
-    var pos_x = utilities.randomizer(200, 1400); 
-    var pos_y = utilities.randomizer(200, 400);
+    var patch = utilities.randomizer(1, Object.keys(that.apple_patches).length); 
+    var position = utilities.setPatchPosition(that.apple_patches[patch]);
+    var xpos = position['x'];
+    var ypos = position['y'];
     var apple_data = this.fetchApple(that);
-    var apple = that.apples.create(pos_x, pos_y , apple_data.type);
+    var apple = that.apples.create(xpos, ypos, apple_data.type);
     
     apple.context = that;
-    apple.enableBody = true;
-    apple.physicsBodyType = Phaser.Physics.P2JS;
     apple.body.setCollisionGroup(that.apple_collision_group);
     game.physics.p2.updateBoundsCollisionGroup();
+
     this.defineApple(that, apple, apple_data);
-    
-    if(apple.has_properties == true){
-      this.growApple(that, apple);
-      apple.body.collides(that.basket_collision_group, this.collectApple, this);
-      game.time.events.add(Phaser.Timer.SECOND * 15, this.killApple, this, that, apple);
-    }
+    apple.enableBody = true;
+    apple.physicsBodyType = Phaser.Physics.P2JS;
+    this.growApple(that, apple);
+    apple.body.collides(that.basket_collision_group, this.collectApple, this);
+    game.time.events.add(Phaser.Timer.SECOND * 15, this.killApple, this, that, apple);
   },
 
   fetchApple: function(that) {
@@ -86,8 +118,8 @@ var apples = {
     return that.apple_data[apple_pick];
   },
 
-  collectApple: function(apple, basket) {
-    apple = apple.sprite;
+  collectApple: function(apple_body) {
+    apple = apple_body.sprite;
     that = apple.context;
     apple.sound.play();
     that.score += apple.worth;
@@ -122,6 +154,7 @@ var apples = {
   },
 
   defineApple: function(that, apple, apple_data){
+    //apple.body.static = true;
     apple.scale.x = 0.1;
     apple.scale.y = 0.1;
     apple.anchor.setTo(0.5, 0);
@@ -135,6 +168,7 @@ var apples = {
     apple.body.data.gravityScale = 0;
     apple.body.data.motionState = 1;
     apple.body.collideWorldBounds = false;
+    apple.collideWorldBounds = false;
     apple.has_properties = true;
   },
 

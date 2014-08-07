@@ -4,16 +4,7 @@ var flowers = {
     
     that.flowers = game.add.group();
     that.flowers.enableBody = true;
-
-    that.flower_bed = game.add.group();
-    that.flower_bed.enableBody = true;
-
-    that.flower_bed_1 = that.flower_bed.create(800, 800, 'flower_bed_1_1');
-    game.physics.p2.enable(that.flower_bed_1);
-    that.flower_bed_1.physicsBodyType = Phaser.Physics.P2JS;
-    //that.flower_bed_1.body.setCollisionGroup(that.flower_bed_collision_group);
-    game.world.addAt(that.flower_bed, 22);
-
+    
     that.flower_data = {
       'white_daisy': {
         'id': 'flower_1',
@@ -45,7 +36,7 @@ var flowers = {
         'rarity': 1
       },
 
-      'mushroom': {
+      /*'mushroom': {
         'id': 'mushroom_1',
         'rarity': 2
       },
@@ -53,8 +44,54 @@ var flowers = {
       'glow_mushroom': {
         'id': 'mushroom_2',
         'rarity': 1
+      }*/
+    };
+    
+    that.flower_patches_1 = {
+      '1': {
+        'xmin': 330,
+        'ymin': 650,
+        'xmax': 505,
+        'ymax': 710
+      },
+      '2': {
+        'xmin': 885,
+        'ymin': 750,
+        'xmax': 1040,
+        'ymax': 875
+      },
+      '3': {
+        'xmin': 1445,
+        'ymin': 785,
+        'xmax': 1540,
+        'ymax': 850
+      },
+      '4': {
+        'xmin': 500,
+        'ymin': 775,
+        'xmax': 595,
+        'ymax': 850
+      },
+      '5': {
+        'xmin': 0,
+        'ymin': 830,
+        'xmax': 160,
+        'ymax': 875
+      },
+      '6': {
+        'xmin': 0,
+        'ymin': 860,
+        'xmax': 1600,
+        'ymax': 900
+      },
+
+      '7': {
+        'xmin': 1280,
+        'ymin': 700,
+        'xmax': 1320,
+        'ymax': 765
       }
-    }
+    };
   },
 
   fetchFlowerType: function(that){
@@ -73,34 +110,56 @@ var flowers = {
 
   spawnFlower: function(that){
     var flower_basket;
+    var flower;
+    var flower_x;
+    var flower_y;
     var flower_name;
     var flower_direction;
     var flower_height;
     var flower_time;
-    var flower_x;
-    var flower_y;
+    var flower_patch;
+    var flower_position;
+    var flower_size;
+    var previous_flower = {};
+    var flower_amount = utilities.randomizer(30, 60);
+    previous_flower.z = 'start';
 
-    for(i = 0; i < 25; i++){
-
+    for(i = 0; i < flower_amount; i++){
       flower_basket = this.fetchFlowerType(that);
+      flower_patch = utilities.randomizer(1, Object.keys(that.flower_patches_1).length);
+      flower_position = utilities.setPatchPosition(that.flower_patches_1[flower_patch]);
+      flower_x = flower_position['x'];
+      flower_y = flower_position['y'];
       flower_name = flower_basket[utilities.randomizer(0, flower_basket.length)];
       flower_direction = utilities.randomizer(-1, 1, 0);
-      flower_height = utilities.randomizer(3, 6) * 0.1;
-      flower_x = utilities.randomizer(200, 1400);
-      flower_y = utilities.randomizer(850, 900);
+      flower_height = utilities.randomizer(4, 6) * 0.1;
+      flower_size = 33.33 * flower_height;
       flower_time = utilities.randomizer(10, 15) * 1000;
-      that.flower = that.flowers.create(flower_x, flower_y, flower_name);
-      if(flower_name == 'mushroom_2' || flower_name == 'glow_mushroom' ){
-        game.world.addAt(that.flower, 22);
-      }
-      game.world.addAt(that.flower, 17);
+      flower = that.flowers.create(flower_x, flower_y, flower_name);
       
-      that.flower.anchor.setTo(0.5, 1);
-      that.flower.scale.x = 0.1 * flower_direction;
-      that.flower.scale.y = 0.1;
+      if((flower.y + flower_size) >= 825){
+        game.world.addAt(flower, (that.newton.z + 1));
+      }else{
+        game.world.addAt(flower, (that.newton.z - 1));
+      }
+        previous_flower = flower;
+
+      flower.anchor.setTo(0.5, 1);
+      flower.scale.x = 0.01 * flower_direction;
+      flower.scale.y = 0.01;
       flower_direction = utilities.randomizer(-1, 1, 0);
-      game.add.tween(that.flower.scale).to({ x: flower_height * flower_direction }, flower_time, Phaser.Easing.Cubic.In, true);
-      game.add.tween(that.flower.scale).to({ y: flower_height }, flower_time, Phaser.Easing.Cubic.In, true);
+      var flower_life = utilities.randomizer(20, 40);
+      game.add.tween(flower.scale).to({ x: flower_height * flower_direction }, flower_time, Phaser.Easing.Cubic.In, true);
+      game.add.tween(flower.scale).to({ y: flower_height }, flower_time, Phaser.Easing.Cubic.In, true);
+      
+      game.time.events.add(Phaser.Timer.Second * flower_life, this.killFlower, this, that);
+   
     }
-  }
+  },
+
+  killFlower: function(flower){
+      var dying_time = utilities.randomizer(5, 15);
+      game.add.tween(flower.scale).to({ x: flower_h}, flower_time, Phaser.Easing.Cubic.In, true);
+      game.add.tween(flower.scale).to({ y: 0 }, flower_time, Phaser.Easing.Cubic.In, true);
+  },
 };
