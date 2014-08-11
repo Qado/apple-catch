@@ -14,6 +14,8 @@ var filters = {
   },
 
   killFilter: function(that) {
-    that.marble_background.filters = null;
+    if(that.newton.poisoned == false){
+      that.marble_background.filters = null;
+    }
   }
 };

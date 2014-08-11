@@ -1,6 +1,7 @@
 var play_state = {    
 
   create: function() {
+    this.score = 0;
     game.physics.startSystem(Phaser.Physics.P2JS);
     game.world.setBounds(0, 0, 1600, 900);
     game.physics.p2.setImpactEvents(true);
@@ -29,43 +30,9 @@ var play_state = {
     world.init(play_state);
     world_events.init(play_state);
     
-    this.ground = game.add.sprite(800, 850, 'background_0');
-    game.physics.p2.enable(this.ground);
-    this.ground.physicsBodyType = Phaser.Physics.P2JS
-    this.ground.body.mass = 1e7;
-    this.ground.body.setCollisionGroup(this.ground_collision_group);
-    this.ground.body.static = true;
-    this.ground.anchor.setTo(0.5, 0.5);
-
-    this.left_bush = game.add.sprite(-50, 700, 'big-bush');
-    game.physics.p2.enable(this.left_bush);
-    this.left_bush.physicsBodyType = Phaser.Physics.P2JS
-    this.left_bush.body.setCircle(200);
-    this.left_bush.body.setCollisionGroup(this.bush_collision_group);
-    this.left_bush.body.data.gravityScale = 0;
-    this.left_bush.body.mass = 1e7;
-    this.left_bush.scale.x = 0.85;
-    this.left_bush.scale.y = 0.85;
-    this.left_bush.fixedBody = true;
-    this.left_bush.body.collideWorldBounds = false;
-    this.left_bush.body.static = true;
-
-    this.right_bush = game.add.sprite(this.worldX + 50, 700, 'big-bush');
-    game.physics.p2.enable(this.right_bush);
-    this.right_bush.physicsBodyType = Phaser.Physics.P2JS
-    this.right_bush.body.setCircle(200);
-    this.right_bush.body.setCollisionGroup(this.bush_collision_group);
-    this.right_bush.body.data.gravityScale = 0;
-    this.right_bush.body.mass = 1e7;
-    this.right_bush.scale.x = -0.85;
-    this.right_bush.scale.y = 0.85
-    this.right_bush.fixedBody = true;
-    this.right_bush.body.collideWorldBounds = false;
-    this.right_bush.body.static = true;
-
     this.newton = game.add.sprite(800, 0, 'newton');
     game.physics.p2.enable(this.newton);
-    game.world.addAt(this.newton, 1000);
+    game.world.addAt(this.newton, 100);
     this.newton.physicsBodyType = Phaser.Physics.P2JS
     this.newton.body.setCollisionGroup(this.newton_collision_group);
     this.newton.speed = 750;
@@ -73,6 +40,7 @@ var play_state = {
     this.newton.body.fixedRotation = true;
     this.newton.body.mass = 175;
     this.newton.animations.add('walk', [0, 1, 2, 1], 15, false);
+    
     this.newton.poisoned = false;
     this.newton_dead = false;
     
@@ -80,12 +48,14 @@ var play_state = {
     this.basket.enableBody = true;
     game.physics.p2.enable(this.basket);
     this.basket.physicsBodyType = Phaser.Physics.P2JS;
+    this.basket.body.setRectangle(150, 100);
+    console.log(this.basket.body);
     this.basket.body.setCollisionGroup(this.basket_collision_group);
     this.basket.anchor.set(-0.15, -0.10);
     this.basket.body.fixedRotation = true;
     game.camera.follow(this.newton);
     
-    this.newton_basket_lock = game.physics.p2.createLockConstraint(this.basket, this.newton, [0, 0], 0);
+    game.physics.p2.createLockConstraint(this.basket, this.newton, [0, 0], 0);
 
     this.coin = game.add.sprite(0, 0, 'coin');
     this.coin.animations.add('spin', [1, 2, 3, 4, 5, 6, 5, 4, 3, 2], 17.5, true);
@@ -104,19 +74,13 @@ var play_state = {
     
     this.left_bush.body.collides(this.newton_collision_group, world_events.shakeLeftBush, this);
     this.right_bush.body.collides(this.newton_collision_group, world_events.shakeRightBush, this);
-    this.newton.body.collides([this.ground_collision_group, this.bush_collision_group, this.enemy_collision_group]);
+    this.newton.body.collides([this.ground_collision_group, this.bush_collision_group]);
+    this.newton.body.collides(this.enemy_collision_group, this.killNewton, this);
     this.basket.body.collides(this.apple_collision_group);
     this.ground.body.collides(this.newton_collision_group, this.registerNewtonGroundContact, this);
     this.ground.body.collides([this.enemy_collision_group, this.apple_collision_group]);
 
     apples.init(play_state);
-    //world_events.startStorm(play_state);
-    //world_events.startNight(play_state);
-    //enemy_events.spawnBeehive(play_state);
-    enemy_events.spawnHedgehog(play_state);
-    //enemy_events.spawnCanonBall(play_state);
-    //world_events.shakeRightBush(play_state);
-    //enemy_events.spawnUFO(play_state);
 
     if(this.enemy_events_state.raven == true){
       this.raven.body.collides(this.ground_collision_group);
@@ -155,7 +119,7 @@ var play_state = {
       this.setnewtonGravity('night');
     }
     if(this.world_events_state.night == false && this.newton.gravity == 'night'){
-      this.setnewtonGravity('night');
+      this.setnewtonGravity('day');
     }
     
     this.spacekey.onDown.add(this.newtonJump, this);
@@ -226,12 +190,11 @@ var play_state = {
     filters.updateFilter(play_state);
     apples.updateApple(play_state);
     world_events.updateWorld(play_state);
-
-    if(this.enemy_events_state.hedgehog == true) {
-      enemy_events.updateHedgehog(play_state);
-    }
+    sequencer.updateSequencer(play_state);
+    
     if(this.newton_dead == false) {
-      this.control();
+      this.control(play_state);
+      //newton.updateNewton(play_state);
     }
   },
   

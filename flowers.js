@@ -121,7 +121,7 @@ var flowers = {
     var flower_position;
     var flower_size;
     var previous_flower = {};
-    var flower_amount = utilities.randomizer(30, 60);
+    var flower_amount = utilities.randomizer(30, 45);
     previous_flower.z = 'start';
 
     for(i = 0; i < flower_amount; i++){

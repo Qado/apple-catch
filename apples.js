@@ -1,7 +1,6 @@
 var apples = {
   
   init: function(that) {
-    that.score = 0;
     that.apple_count = 0;
     that.apple_dimensionY = 1;
     that.apple_dimensionX = 1;
@@ -31,19 +30,19 @@ var apples = {
       },
       '3': {
         'type': 'golden-apple',
-        'worth': 3,
+        'worth': 4,
         'effect': null,
         'sound': that.golden_score_sound
       },
       '4': {
         'type': 'rotten-apple',
-        'worth': -6,
+        'worth': -4,
         'effect': null,
         'sound': that.poison_sound
       },
       '5': {
         'type': 'poisoned-apple',
-        'worth': -9,
+        'worth': -8,
         'effect': 'poisoned',
         'sound': that.poison_sound
       }
@@ -78,7 +77,7 @@ var apples = {
 
     that.score_text = game.add.text(65, 10, 'x 0');
     that.score_text.font = 'Arial';
-    that.score_text.fontSize = 35;
+    that.score_text.fontSize = 45;
     that.score_text.fontWeight = 'bold';
     that.score_text.stroke = '#000000';
     that.score_text.strokeThickness = 4;
@@ -88,7 +87,7 @@ var apples = {
   },
   
   updateApple: function(that) {
-    if(that.apple_count < 10){
+    if(that.apple_count < 15){
       this.spawnApple(that);
     }
   },

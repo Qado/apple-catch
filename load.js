@@ -1,7 +1,7 @@
 var load_state = {
 
     preload: function() {
-      
+
       game.load.script('filter', 'phaser-master/filters/Marble.js')
       game.stage.backgroundColor = '#C2E7FF';
 
@@ -23,6 +23,14 @@ var load_state = {
       //Newton//
       game.load.image('basket', 'assets/images/sprites/newton/basket.png');
       game.load.spritesheet('newton', 'assets/images/sprites/newton/newton.png', 141, 254);
+      game.load.image('newton_eyes', 'assets/images/sprites/newton/newton_eyes.png');
+      game.load.image('newton_hair', 'assets/images/sprites/newton/newton_hair.png');
+      game.load.image('newton_head', 'assets/images/sprites/newton/newton_head.png');
+      game.load.image('newton_torso', 'assets/images/sprites/newton/newton_torso.png');
+      game.load.image('newton_trousers', 'assets/images/sprites/newton/newton_trousers.png');
+      game.load.image('newton_mouth', 'assets/images/sprites/newton/newton_mouth.png');
+      game.load.image('newton_thigh', 'assets/images/sprites/newton/newton_thigh.png');
+      game.load.image('newton_leg', 'assets/images/sprites/newton/newton_leg.png');
       
       //Bushes//
       game.load.image('big-bush', 'assets/images/sprites/bushes/big_bush.png');
@@ -80,6 +88,8 @@ var load_state = {
       game.load.image('mushroom_1', 'assets/images/sprites/flowers/mushroom.png');
       game.load.image('mushroom_2', 'assets/images/sprites/flowers/glow_mushroom.png');
 
+      game.load.spritesheet('play_button', 'assets/images/sprites/etc/play_button.png', 172, 106);
+      
       //Loading Audio//
       game.load.audio('theme-song', 'assets/sounds/game_theme.mp3');
       game.load.audio('red-score', 'assets/sounds/red_sound.wav');
@@ -100,7 +110,7 @@ var load_state = {
 
     create: function() {
 
-      game.state.start('play');
+      game.state.start('menu');
 
   }
 };
