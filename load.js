@@ -76,7 +76,6 @@ var load_state = {
       //Raven//
       game.load.spritesheet('raven', 'assets/images/sprites/enemies/raven/raven_spritesheet.png', 125, 134);
       game.load.spritesheet('egg', 'assets/images/sprites/enemies/raven/raven_egg_spritesheet.png', 60, 92);
-      game.load.image('yolk', 'assets/images/sprites/enemies/raven/egg_yolk.png');
 
       //Flowers//
       game.load.image('flower_1', 'assets/images/sprites/flowers/white_daisy.png');
@@ -89,6 +88,8 @@ var load_state = {
       game.load.image('mushroom_2', 'assets/images/sprites/flowers/glow_mushroom.png');
 
       game.load.spritesheet('play_button', 'assets/images/sprites/etc/play_button.png', 172, 106);
+      game.load.spritesheet('music_button', 'assets/images/sprites/etc/music_button.png', 172, 106);
+      game.load.spritesheet('sfx_button', 'assets/images/sprites/etc/sfx_button.png', 172, 106);
       
       //Loading Audio//
       game.load.audio('theme-song', 'assets/sounds/game_theme.mp3');

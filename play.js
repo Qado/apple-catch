@@ -66,7 +66,7 @@ var play_state = {
 
     this.normal_theme = game.add.audio('theme-song');
     this.poison_theme = game.add.audio('poison-song');
-    //this.normal_theme.play();
+    this.normal_theme.play();
     
     this.collision_sound = game.add.audio('collision-sound')
 
