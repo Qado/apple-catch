@@ -87,16 +87,15 @@ var newton = {
     that.newton_hair.body.setCollisionGroup(that.newton_collision_group);
     that.newton_hair.fixedBody = true;
 
+    game.physics.p2.createLockConstraint(that.newton_eyes, that.newton_head, [25, -10], 0);
     game.physics.p2.createLockConstraint(that.newton_mouth, that.newton_head, [25, 2], 0);
     game.physics.p2.createLockConstraint(that.newton_hair, that.newton_head, [0, 2], 0);
-    
-    var eyes_head = game.physics.p2.createLockConstraint(that.newton_eyes, that.newton_head, [25, -10], 0);
-    var torso_head = game.physics.p2.createLockConstraint(that.newton_head, that.newton_torso, [0, -100], 0);
-    var torso_trousers = game.physics.p2.createLockConstraint(that.newton_torso, that.newton_trousers, [0, -30], 0);
-    var r_thigh_trousers = game.physics.p2.createLockConstraint(that.newton_right_thigh, that.newton_trousers, [0, 29], 0);
-    var l_thigh_trousers =game.physics.p2.createLockConstraint(that.newton_left_thigh, that.newton_trousers, [50, 29], 0);
-    var r_leg_r_thigh = game.physics.p2.createLockConstraint(that.newton_right_leg, that.newton_right_thigh, [30, 20], 1e4);
-    var l_leg_l_thigh = game.physics.p2.createLockConstraint(that.newton_left_leg, that.newton_left_thigh, [25, 20], 1e4);
+    game.physics.p2.createLockConstraint(that.newton_head, that.newton_torso, [0, -100], 0);
+    game.physics.p2.createLockConstraint(that.newton_torso, that.newton_trousers, [0, -30], 0);
+    game.physics.p2.createLockConstraint(that.newton_right_thigh, that.newton_trousers, [0, 29], 0);
+    game.physics.p2.createLockConstraint(that.newton_left_thigh, that.newton_trousers, [50, 29], 0);
+    game.physics.p2.createLockConstraint(that.newton_right_leg, that.newton_right_thigh, [30, 20], 1e4);
+    game.physics.p2.createLockConstraint(that.newton_left_leg, that.newton_left_thigh, [25, 20], 1e4);
   
     that.newton_right_leg.body.collides([that.ground_collision_group, that.bush_collision_group, that.enemy_collision_group]);
     that.newton_left_leg.body.collides([that.ground_collision_group, that.bush_collision_group, that.enemy_collision_group]);
@@ -107,8 +106,5 @@ var newton = {
     that.newton_trousers.body.collides([that.ground_collision_group, that.bush_collision_group, that.enemy_collision_group]);
     that.newton_right_thigh.body.collides([that.ground_collision_group, that.bush_collision_group, that.enemy_collision_group]);
     that.newton_left_thigh.body.collides([that.ground_collision_group, that.bush_collision_group, that.enemy_collision_group]);
-    
-    l_leg_l_thigh.destroy();
-  
   },
 }; 

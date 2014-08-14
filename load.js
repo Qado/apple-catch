@@ -88,11 +88,10 @@ var load_state = {
       game.load.image('mushroom_2', 'assets/images/sprites/flowers/glow_mushroom.png');
 
       game.load.spritesheet('play_button', 'assets/images/sprites/etc/play_button.png', 172, 106);
-      game.load.spritesheet('music_button', 'assets/images/sprites/etc/music_button.png', 172, 106);
-      game.load.spritesheet('sfx_button', 'assets/images/sprites/etc/sfx_button.png', 172, 106);
       
       //Loading Audio//
       game.load.audio('theme-song', 'assets/sounds/game_theme.mp3');
+      game.load.audio('title-theme', 'assets/sounds/title_theme.wav');
       game.load.audio('red-score', 'assets/sounds/red_sound.wav');
       game.load.audio('green-score', 'assets/sounds/green_sound.wav');
       game.load.audio('golden-score', 'assets/sounds/golden_sound.wav');

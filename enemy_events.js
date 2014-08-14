@@ -34,7 +34,7 @@ var enemy_events = {
     if(that.hedgehog_direction == 1){
      world_events.shakeLeftBush(play_state);
     }
-    game.time.events.add(Phaser.Timer.SECOND * 2.5, this.defineHedgehog, this, that);
+    game.time.events.add(Phaser.Timer.SECOND * 0.5, this.defineHedgehog, this, that);
   },
 
   defineHedgehog: function(that){
@@ -54,11 +54,11 @@ var enemy_events = {
     that.hedgehog.animations.add('walk', [0, 1, 2, 1], 20, true);
     that.hedgehog.animations.play('walk');
     if(that.hedgehog_direction == -1){
-      game.add.tween(that.hedgehog.body).to( { x: 0 }, 500, Phaser.Easing.Linear.Out, true); 
+      game.add.tween(that.hedgehog.body).to( { x: 0 }, 3000, Phaser.Easing.Linear.Out, true); 
     }else{
-      game.add.tween(that.hedgehog.body).to( { x: that.worldX }, 500, Phaser.Easing.Linear.Out, true); 
+      game.add.tween(that.hedgehog.body).to( { x: that.worldX }, 3000, Phaser.Easing.Linear.Out, true); 
     }
-    game.time.events.add(Phaser.Timer.SECOND * 5.005, this.__removeHedgehog, this, that);
+    game.time.events.add(Phaser.Timer.SECOND * 3.005, this.__removeHedgehog, this, that);
     game.time.events.add(Phaser.Timer.SECOND * 10, this.__killHedgehog, this, that);
   },
 
@@ -185,11 +185,13 @@ var enemy_events = {
   },
   
   __killRaven: function(that){
-   that.enemy_events_state.raven = false;
-   that.enemy_events_state.egg = false;
-
+    that.enemy_events_state.raven = false;
     that.raven.kill();
-    that.egg.kill();
+    
+    if(that.enemy_events_state.egg == true){
+      that.egg.kill();
+      that.enemy_events_state.egg = false;
+    }
   },
 
   spawnCanonBall: function(that) {

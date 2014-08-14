@@ -15,7 +15,7 @@ var menu_state = {
     this.title.strokeThickness = 5;
     this.title.fill = '#ffffff';
 
-    this.subtitle = game.add.text(game.world.width/2, 250, 'Beta v.0.9');
+    this.subtitle = game.add.text(game.world.width/2, 225, 'Beta v.0.9');
     this.subtitle.anchor.setTo(0.5, 0.5);
     this.subtitle.font = 'Arial';
     this.subtitle.fontSize = 35;
@@ -26,10 +26,14 @@ var menu_state = {
     
     this.play_button = game.add.button(800, 700, 'play_button', this.start, this, 1, 0, 1, 1);
     this.play_button.anchor.setTo(0.5, 0.5);
+
+    this.title_theme = game.add.audio('title-theme', 1, true);
+    this.title_theme.play();
   },
 
   start: function() {
     this.game.state.start('play');
+    this.title_theme.pause();
   },
 
   update: function() {

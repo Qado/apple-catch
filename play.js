@@ -58,10 +58,8 @@ var play_state = {
     //I played around with the world alpha to see what it would look like when
     //I start it and I'm not really feeling it that much...
 
-    game.world.alpha = 0;
     game.world.scale.x = 2;
     game.world.scale.y = 2;
-    game.add.tween(game.world).to( { alpha: 1 }, 3000, Phaser.Easing.Linear.Out, true);
     game.add.tween(game.world.scale).to( { x: 1 }, 1500, Phaser.Easing.Linear.Out, true);
     game.add.tween(game.world.scale).to( { y: 1 }, 1500, Phaser.Easing.Linear.Out, true);
     
@@ -186,6 +184,9 @@ var play_state = {
       this.collision_sound.play();
       this.newton_dead = true;
       this.newton.kill();
+      game.physics.p2.createLockConstraint(this.basket, this.newton, [0, 0], 0);
+      game.add.tween(this.normal_theme).to( { volume: 0 }, 2500, Phaser.Easing.Linear.Out, true);
+      game.add.tween(this.posion_theme).to( { volume: 0 }, 2500, Phaser.Easing.Linear.Out, true);
       newton.init(play_state);
     }
   },
