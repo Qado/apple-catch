@@ -19,11 +19,12 @@ var enemy_events = {
     that.enemy.physicsBodyType = Phaser.Physics.P2JS;
 
     that.raven_flap = game.add.audio('flap');
+    that.raven_caw = game.add.audio('caw');
     that.canon_fire = game.add.audio('canon-fire');
   },
 
-  spawnHedgehog: function(that, level){
-    var level = level || 1;
+  spawnHedgehog: function(that){
+    that.enemy_events_state.hedgehog = true;
     
     that.hedgehog_direction = utilities.randomizer(-1, 1, 0);
     
@@ -33,17 +34,15 @@ var enemy_events = {
     if(that.hedgehog_direction == 1){
      world_events.shakeLeftBush(play_state);
     }
-    game.time.events.add(Phaser.Timer.SECOND * 5, this.defineHedgehog, this, that);
+    game.time.events.add(Phaser.Timer.SECOND * 2.5, this.defineHedgehog, this, that);
   },
 
   defineHedgehog: function(that){
     that.hedgehog = that.enemy.create(0, 700, 'hedgehog');
-    that.enemy_events_state.hedgehog = true;
     game.world.addAt(that.hedgehog, that.left_bush.z - 1);
     game.physics.p2.enable(that.hedgehog);
     that.hedgehog.scale.x = that.hedgehog_direction;
     that.hedgehog.body.x = Math.abs((that.hedgehog_direction * that.worldX) - that.worldX) / 2;
-    that.hedgehog.speed = Math.log(level * 2) * 450;
     that.hedgehog.body.fixedBody = true;
     
     that.hedgehog.body.setCollisionGroup(that.enemy_collision_group);
@@ -55,21 +54,27 @@ var enemy_events = {
     that.hedgehog.animations.add('walk', [0, 1, 2, 1], 20, true);
     that.hedgehog.animations.play('walk');
     if(that.hedgehog_direction == -1){
-      game.add.tween(that.hedgehog.body).to( { x: 0 }, 5000, Phaser.Easing.Linear.Out, true); 
+      game.add.tween(that.hedgehog.body).to( { x: 0 }, 500, Phaser.Easing.Linear.Out, true); 
     }else{
-      game.add.tween(that.hedgehog.body).to( { x: that.worldX }, 5000, Phaser.Easing.Linear.Out, true); 
+      game.add.tween(that.hedgehog.body).to( { x: that.worldX }, 500, Phaser.Easing.Linear.Out, true); 
     }
-    game.time.events.add(Phaser.Timer.SECOND * 5.005, this.__killHedgehog, this, that);
+    game.time.events.add(Phaser.Timer.SECOND * 5.005, this.__removeHedgehog, this, that);
+    game.time.events.add(Phaser.Timer.SECOND * 10, this.__killHedgehog, this, that);
   },
 
-  __killHedgehog: function(that){
-    that.enemy_events_state.hedgehog = false;
+  __removeHedgehog: function(that) {
+
     if(that.hedgehog_direction == -1){
       world_events.shakeLeftBush(play_state);
     }
     if(that.hedgehog_direction == 1){
       world_events.shakeRightBush(play_state);
     }
+
+  },
+ 
+  __killHedgehog: function(that){
+    that.enemy_events_state.hedgehog = false;
     that.hedgehog.kill();
   },
 
@@ -117,30 +122,43 @@ var enemy_events = {
   spawnRaven: function(that){
     that.enemy_events_state.raven = true;
     var ypos;
+    var xpos;
+    var direction = utilities.randomizer(1, -1, 0);
     
     if(that.score > 400) {
       ypos = 500;
     } else {
       ypos = that.score + 100;
     }
-    that.raven = that.enemy.create(1600, ypos, 'raven');
+
+    if(direction == 1){
+      xpos = 1600;
+    }else{
+      xpos = 0;
+    }
+
+    that.raven = that.enemy.create(xpos, ypos, 'raven');
+    game.world.addAt(that.raven, that.newton.z + 1);
     game.physics.p2.enable(that.raven);
     that.raven.body.data.gravityScale = 0;
-    game.world.addAt(that.raven, that.newton.z + 1);
+    that.raven.scale = direction;
+    that.raven.body.static = true;
     that.raven.anchor.set(-0.25, 1.25)
     that.raven.body.angle = 25;
     that.raven.animations.add('flap', [0, 1], 8, true);
     that.raven.animations.play('flap');
     that.raven.body.collideWorldBounds = false;
-    game.add.tween(that.raven.body).to( { x: -200 }, 5000, Phaser.Easing.Linear.Out, true);
+    if(direction == 1){
+      game.add.tween(that.raven.body).to( { x: -200 }, 5000, Phaser.Easing.Linear.Out, true);
+    }else{
+      game.add.tween(that.raven.body).to( { x: 1800 }, 5000, Phaser.Easing.Linear.Out, true);
+    }
     game.time.events.add(Phaser.Timer.SECOND * 12, this.__killRaven, this, that);
   },
 
   updateRaven: function(that){
     if(that.enemy_events_state.raven == true){
-      newtonPos = Math.round(that.newton.x/100) * 100
-      ravenPos = Math.round(that.raven.x/100) * 100
-      if(newtonPos == ravenPos && that.enemy_events_state.egg == false) {
+      if(that.raven.body.x == that.newton.body.x && that.enemy_events_state.egg == true){
         this.dropEgg(that);
       }
     }
@@ -195,7 +213,7 @@ var enemy_events = {
   },
 
   __dropCanonBall: function(that) { 
-    that.real_canon_ball = game.add.sprite(that.fake_canon_ball.body.x, -500, 'canon_ball_vertical_shadow');
+    that.real_canon_ball = that.enemy.create(that.fake_canon_ball.body.x, -500, 'canon_ball_vertical_shadow');
     that.fake_canon_ball_2 = game.add.sprite(0, -500, 'canon_ball');
     game.world.addAt(that.real_canon_ball, that.basket.z + 1);
     that.real_canon_ball.anchor.set(0.5, 0);
@@ -268,7 +286,7 @@ var enemy_events = {
     that.beam.alpha = 0;
     that.beam.scale.x = 0.01;
     that.beam.scale.y = 0.01;
-    that.blue_light = that.UFO.create(that.beam.x, that.beam.y + 550, 'blue-light');
+    that.blue_light = that.enemy.create(that.beam.x, that.beam.y + 550, 'blue-light');
     that.blue_light.anchor.setTo(0.5, 0.5);
     that.blue_light.alpha = 0;
     that.blue_light.scale.x = 2.5;

@@ -100,6 +100,7 @@ var load_state = {
       game.load.audio('poison-song', 'assets/sounds/poison_theme.wav');
       game.load.audio('collision-sound', 'assets/sounds/collide.wav');
       game.load.audio('flap', 'assets/sounds/raven_flap.wav');
+      game.load.audio('caw', 'assets/sounds/raven_caw.wav');
       game.load.audio('canon-fire', 'assets/sounds/fire_canon.wav');
       game.load.audio('thunder_1', 'assets/sounds/thunder_1.wav');
       game.load.audio('thunder_2', 'assets/sounds/thunder_2.wav');

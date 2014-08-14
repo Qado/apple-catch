@@ -11,8 +11,6 @@ var play_state = {
     this.spacekey = game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
     this.worldX = game.world.width;
     this.worldY = game.world.height;
-
-    this.minute = Math.floor(game.time.time / 60000) % 60;
     
     this.effects = game.add.group();
     this.effects.enableBody = true;
@@ -57,6 +55,16 @@ var play_state = {
     
     game.physics.p2.createLockConstraint(this.basket, this.newton, [0, 0], 0);
 
+    //I played around with the world alpha to see what it would look like when
+    //I start it and I'm not really feeling it that much...
+
+    game.world.alpha = 0;
+    game.world.scale.x = 2;
+    game.world.scale.y = 2;
+    game.add.tween(game.world).to( { alpha: 1 }, 3000, Phaser.Easing.Linear.Out, true);
+    game.add.tween(game.world.scale).to( { x: 1 }, 1500, Phaser.Easing.Linear.Out, true);
+    game.add.tween(game.world.scale).to( { y: 1 }, 1500, Phaser.Easing.Linear.Out, true);
+    
     this.coin = game.add.sprite(0, 0, 'coin');
     this.coin.animations.add('spin', [1, 2, 3, 4, 5, 6, 5, 4, 3, 2], 17.5, true);
     this.coin.fixedToCamera = true;
@@ -177,13 +185,12 @@ var play_state = {
     if (this.newton_dead == false){
       this.collision_sound.play();
       this.newton_dead = true;
+      this.newton.kill();
+      newton.init(play_state);
     }
   },
   
   update: function() {
-    now_minute = Math.floor(game.time.time / 60000) % 60;
-    level = now_minute - this.minute + 5
-
     //enemy_events.updateCanonBall(play_state, level); 
     enemy_events.updateRaven(play_state);
     enemy_events.updateUFO(play_state);
@@ -194,7 +201,6 @@ var play_state = {
     
     if(this.newton_dead == false) {
       this.control(play_state);
-      //newton.updateNewton(play_state);
     }
   },
   

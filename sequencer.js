@@ -3,8 +3,8 @@ var sequencer = {
   updateSequencer: function(that){
   
     //Hedgehog Sequencer//
-    if(that.score >= 10 && that.enemy_events_state.hedgehog == false){
-      if(utilities.randomizer(1, 1000) == 1){
+    if(that.score >= 5 && that.enemy_events_state.hedgehog == false){
+      if(utilities.randomizer(1, 200) == 1){
         enemy_events.spawnHedgehog(play_state);
       }
     }
