@@ -205,7 +205,6 @@ var enemy_events = {
     that.fake_canon_ball.enableBody = true;
     that.canon_fire.play();
     
-    that.fake_canon_ball.kill_time = Math.abs(Math.round(Math.sin(level) * 30));
     game.add.tween(that.fake_canon_ball).to( { y: -100 }, 8500, Phaser.Easing.Linear.Out, true);
     game.add.tween(that.fake_canon_ball).to( { x: that.newton.body.x }, 8500, Phaser.Easing.Linear.Out, true);
     game.add.tween(that.fake_canon_ball.scale).to( { x: 0.5 }, 8000, Phaser.Easing.Linear.Out, true);

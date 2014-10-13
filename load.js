@@ -2,7 +2,8 @@ var load_state = {
 
     preload: function() {
 
-      game.load.script('filter', 'phaser-master/filters/Marble.js')
+      game.load.script('filter', 'phaser-master/filters/Marble.js');
+      //game.load.bitmapFont('idolwild', 'assets/fonts/idolwild-webfont.ttf', 'assets/fonts/idolwild-webfont.woff');
       game.stage.backgroundColor = '#C2E7FF';
 
       //Loading Images//
@@ -88,6 +89,7 @@ var load_state = {
       game.load.image('mushroom_2', 'assets/images/sprites/flowers/glow_mushroom.png');
 
       game.load.spritesheet('play_button', 'assets/images/sprites/etc/play_button.png', 172, 106);
+      game.load.spritesheet('music_button', 'assets/images/sprites/etc/music_button.png', 172, 106);
       
       //Loading Audio//
       game.load.audio('theme-song', 'assets/sounds/game_theme.mp3');

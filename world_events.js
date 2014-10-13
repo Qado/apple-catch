@@ -41,16 +41,16 @@ var world_events = {
     that.darkness = that.effects.create(0, 0, 'black_screen');
     that.darkness.alpha = 0;
     
-    //Storm Darkness
+    //Creating storm darkness
     that.storm_darkness = that.effects.create(0, 0, 'black_screen');
     that.storm_darkness.alpha = 0;
 
-    //Lightning
+    //Creating lightning
     that.lightning = that.effects.create(0, 0, 'lightning');
     game.world.addAt(that.lightning, 1);
     that.lightning.alpha = 0;
     
-    //Foreground Rain Emitters
+    //Foreground Rain Emitter//
     that.rainEmitter_1 = game.add.emitter(game.world.centerX, 0, 6000);
     that.effects.add(that.rainEmitter_1);
     that.rainEmitter_1.particleBringToTop = true;
@@ -65,7 +65,7 @@ var world_events = {
     that.rainEmitter_1.minParticleAlpha = 0;
     that.rainEmitter_1.maxParticleAlpha = 0.2;
     
-    //Background Rain Emitter
+    //Background Rain Emitter//
     that.rainEmitter_2 = game.add.emitter( game.world.centerX, 0, 6000);
     that.effects.add(that.rainEmitter_2);
     that.rainEmitter_2.width = that.worldX;
@@ -79,6 +79,7 @@ var world_events = {
     that.rainEmitter_2.minParticleAlpha = 0;
     that.rainEmitter_2.maxParticleAlpha = 0.2;
 
+    //Leaf Emitter for bush//
     that.leafEmitter = game.add.emitter(800, 700, 10);
     that.leafEmitter.makeParticles('leaf_1');
     that.effects.add(that.leafEmitter);
@@ -91,6 +92,7 @@ var world_events = {
     that.leafEmitter.minRotation = -360;
     that.leafEmitter.maxRotation = 360;
 
+    //Bush Rustle Sound//
     that.bush_rustle = game.add.audio('bush_rustle');
   },
 
