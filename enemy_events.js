@@ -1,11 +1,11 @@
 var enemy_events = {
 
   init: function(that){
-    
     that.enemy_events_state = {};
     that.enemy_events_state.hedgehog = false;
     that.enemy_events_state.beehive = false;
     that.enemy_events_state.raven = false;
+    that.enemy_events_state.raven_born = false;
     that.enemy_events_state.egg = false;
     that.enemy_events_state.canon = false;
     that.enemy_events_state.UFO = false;
@@ -19,7 +19,8 @@ var enemy_events = {
     that.enemy.physicsBodyType = Phaser.Physics.P2JS;
 
     that.raven_flap = game.add.audio('flap');
-    that.raven_caw = game.add.audio('caw');
+    that.raven_caw = game.add.audio('caw', 10);
+    that.egg_crush = game.add.audio('egg-crush', 5);
     that.canon_fire = game.add.audio('canon-fire');
   },
 
@@ -63,19 +64,117 @@ var enemy_events = {
   },
 
   __removeHedgehog: function(that) {
-
     if(that.hedgehog_direction == -1){
       world_events.shakeLeftBush(play_state);
     }
     if(that.hedgehog_direction == 1){
       world_events.shakeRightBush(play_state);
     }
-
   },
  
   __killHedgehog: function(that){
     that.enemy_events_state.hedgehog = false;
     that.hedgehog.kill();
+  },
+  
+  spawnRaven: function(that){
+    that.enemy_events_state.raven = true;
+    that.raven_direction = utilities.randomizer(-1, 1, 0);
+    that.raven_caw.play();
+    game.time.events.add(Phaser.Timer.SECOND * 0.5, this.defineRaven, this, that);
+  },
+
+  defineRaven: function(that){
+    var ypos = (that.score + 250 < 450 ? that.score + 250 : 450);
+    that.raven = that.enemy.create(0, ypos, 'raven');
+    that.enemy_events_state.raven_born = true;
+    game.world.addAt(that.raven, that.left_bush.z - 1);
+    that.raven.scale.x = (that.raven_direction * -1);
+    that.raven.body.x = Math.abs((that.raven_direction * that.worldX) - that.worldX) / 2;
+    that.raven.body.fixedBody = true;
+    that.raven.body.data.gravityScale = 0;
+    
+    that.raven.body.setCollisionGroup(that.enemy_collision_group);
+    that.raven.body.collides([that.ground_collision_group, that.newton_collision_group]);
+    
+    that.raven.body.collideWorldBounds = false;
+    game.add.tween(that.raven).to( { x: 0 }, 1000, Phaser.Easing.Linear.Out, true);
+    that.raven.animations.add('flap', [0, 1, 2, 3, 4, 5, 6, 5, 4, 3, 2, 1], 75, true);
+    that.raven.animations.play('flap');
+    that.raven_flap.play();
+    if(that.raven_direction == -1){
+      game.add.tween(that.raven.body).to( { x: -100 }, 3000, Phaser.Easing.Linear.Out, true); 
+    }else{
+      game.add.tween(that.raven.body).to( { x: that.worldX + 100 }, 3000, Phaser.Easing.Linear.Out, true); 
+    }
+    
+    game.time.events.add(Phaser.Timer.SECOND * 3.5, this.__killRaven, this, that);
+  },
+
+  updateRaven: function(that){
+    if(Math.round(that.raven.body.x) - Math.round(that.newton.x) < 30 && that.enemy_events_state.egg == false){
+      this.dropEgg(that);
+    }
+  },
+
+  dropEgg: function(that){
+    that.enemy_events_state.egg = true;
+    that.egg = that.enemy.create(that.raven.x, that.raven.y, 'egg');
+    that.egg.animations.add('crack', [0, 1], 10, false);
+    game.world.addAt(that.egg, that.newton.z + 1);
+    that.egg.scale.x = 0.1;
+    that.egg.scale.y = 0.1;
+    
+    game.add.tween(that.egg.scale).to( { x: 1 }, 750, Phaser.Easing.Linear.Out, true); 
+    game.add.tween(that.egg.scale).to( { y: 1 }, 750, Phaser.Easing.Linear.Out, true);
+
+    that.egg.body.setCollisionGroup(that.enemy_collision_group);
+    that.egg.body.collides(that.newton_collision_group, this.__crackEggNewton, this);
+    that.egg.body.collides(that.ground_collision_group, this.__crackEggGround, this);
+  },
+
+  __crackEggNewton: function(){
+    that = play_state;
+    that.egg_crush.play();
+    that.egg.animations.play('crack');
+    game.time.events.add(Phaser.Timer.SECOND * 1, this.__killEgg, this, that);
+  },
+  
+  __crackEggGround: function(){
+    that = play_state;
+    that.egg_crush.play();
+    that.egg.animations.play('crack');
+    game.time.events.add(Phaser.Timer.SECOND * 0.25, this.__spawnYolk, this, that);
+    game.time.events.add(Phaser.Timer.SECOND * 2, this.__killEgg, this, that);
+  },
+
+  __spawnYolk: function(that){
+    that.yolk = game.add.sprite(that.egg.x, that.egg.y, 'yolk');
+    that.yolk.anchor.setTo(0.5, 1);
+    that.yolk.alpha = 0;
+    game.add.tween(that.yolk.scale).to( { x: 1 }, 500, Phaser.Easing.Linear.Out, true); 
+    game.add.tween(that.yolk.scale).to( { y: 0.75 }, 500, Phaser.Easing.Linear.Out, true); 
+    game.add.tween(that.yolk).to( { alpha: 0.5 }, 500, Phaser.Easing.Linear.Out, true); 
+  },
+
+  __fadeawayYolk: function(that){
+    game.add.tween(that.yolk).to( { alpha: 0 }, 10000, Phaser.Easing.Linear.Out, true); 
+    game.time.events.add(Phaser.Timer.SECOND * 10, this.__destroyYolk, this, that);
+  },
+
+  __destroyYolk: function(that){
+    that.yolk.destory();
+  },
+
+  __killEgg: function(that){
+    that.egg.destroy();
+    that.enemy_events_state.egg = false;
+  },
+
+  __killRaven: function(that){
+    that.enemy_events_state.raven = false;
+    that.enemy_events_state.raven_born = false;
+    that.raven.kill();
   },
 
   spawnBeehive: function(that){
@@ -119,81 +218,6 @@ var enemy_events = {
     that.beehive.kill();
   },
 
-  spawnRaven: function(that){
-    that.enemy_events_state.raven = true;
-    var ypos;
-    var xpos;
-    var direction = utilities.randomizer(1, -1, 0);
-    
-    if(that.score > 400) {
-      ypos = 500;
-    } else {
-      ypos = that.score + 100;
-    }
-
-    if(direction == 1){
-      xpos = 1600;
-    }else{
-      xpos = 0;
-    }
-
-    that.raven = that.enemy.create(xpos, ypos, 'raven');
-    game.world.addAt(that.raven, that.newton.z + 1);
-    game.physics.p2.enable(that.raven);
-    that.raven.body.data.gravityScale = 0;
-    that.raven.scale = direction;
-    that.raven.body.static = true;
-    that.raven.anchor.set(-0.25, 1.25)
-    that.raven.body.angle = 25;
-    that.raven.animations.add('flap', [0, 1], 8, true);
-    that.raven.animations.play('flap');
-    that.raven.body.collideWorldBounds = false;
-    if(direction == 1){
-      game.add.tween(that.raven.body).to( { x: -200 }, 5000, Phaser.Easing.Linear.Out, true);
-    }else{
-      game.add.tween(that.raven.body).to( { x: 1800 }, 5000, Phaser.Easing.Linear.Out, true);
-    }
-    game.time.events.add(Phaser.Timer.SECOND * 12, this.__killRaven, this, that);
-  },
-
-  updateRaven: function(that){
-    if(that.enemy_events_state.raven == true){
-      if(that.raven.body.x == that.newton.body.x && that.enemy_events_state.egg == true){
-        this.dropEgg(that);
-      }
-    }
-  },
-
-  dropEgg: function(that){
-    that.egg = that.enemy.create(that.raven.x, that.raven.y, 'egg');
-    that.egg.animations.add('crack', [0, 1], 10, false);
-    game.world.addAt(that.egg, that.newton.z + 1);
-    that.egg.anchor.set(0.5, 0.5);
-    that.egg.scale.x = 0.05;
-    that.egg.scale.y = 0.05;
-    that.egg.body.gravity.y = 350;
-    game.add.tween(that.egg.scale).to( { x: 0.5 }, 250, Phaser.Easing.Linear.Out, true);
-    game.add.tween(that.egg.scale).to( { y: 0.5 }, 250, Phaser.Easing.Linear.Out, true);
-    that.egg.body.setCollisionGroup(that.enemy_collision_group);
-    that.egg.body.collides([that.ground_collision_group, that.newton_collision_group]);
-    that.egg.body.collides(that.ground_collision_group, this.__crackEgg, this);
-    that.enemy_events_state.egg = true;
-  },
-
-  __crackEgg: function(that){
-    that.egg.animations.play('crack');
-  },
-  
-  __killRaven: function(that){
-    that.enemy_events_state.raven = false;
-    that.raven.kill();
-    
-    if(that.enemy_events_state.egg == true){
-      that.egg.kill();
-      that.enemy_events_state.egg = false;
-    }
-  },
-
   spawnCanonBall: function(that) {
     that.enemy_events_state.canon_ball = true;
     that.fake_canon_ball = that.effects.create(0, 700, 'canon-ball');
@@ -223,7 +247,6 @@ var enemy_events = {
     game.add.tween(that.real_canon_ball.scale).to({ x: 1 }, 1000, Phaser.Easing.Linear.Out, true);
     game.add.tween(that.real_canon_ball).to({ alpha: 1 }, 1000, Phaser.Easing.Linear.Out, true);
     game.time.events.add(Phaser.Timer.SECOND * 1, this.defineCanonBall, this, that);
-    
   },
   
   defineCanonBall: function(that){
@@ -300,25 +323,24 @@ var enemy_events = {
     game.add.tween(that.beam.scale).to( { y: 1 }, 750, Phaser.Easing.Linear.Out, true);
   },
 
-  __chargeBeam: function(that) {
+  __chargeBeam: function(that){
+    that.lightEmitter = game.add.emitter(900, 800, 100);
+    that.lightEmitter.width = 200;
+    that.lightEmitter.makeParticles('corona');
+    that.lightEmitter.setAlpha(0.3, 0.8);
+    that.game.world.addAt(that.lightEmitter, 0);
+    that.lightEmitter.minParticleScale = 0.05;
+    that.lightEmitter.maxParticleScale = 0.35;
+    that.lightEmitter.setYSpeed(-750, -1000);
+    that.lightEmitter.setXSpeed(-100, 100);
+    that.lightEmitter.minRotation = -10;
+    that.lightEmitter.maxRotation = 10;
+    that.lightEmitter.x = that.UFO_horizontal_shadow.x;
+    that.lightEmitter.start(false, 1600, 20, 0);
+    },
 
-   that.lightEmitter = game.add.emitter(900, 800, 100);
-   that.lightEmitter.width = 200;
-   that.lightEmitter.makeParticles('corona');
-   that.lightEmitter.setAlpha(0.3, 0.8);
-   that.game.world.addAt(that.lightEmitter, 0);
-   that.lightEmitter.minParticleScale = 0.05;
-   that.lightEmitter.maxParticleScale = 0.35;
-   that.lightEmitter.setYSpeed(-750, -1000);
-   that.lightEmitter.setXSpeed(-100, 100);
-   that.lightEmitter.minRotation = -10;
-   that.lightEmitter.maxRotation = 10;
-   that.lightEmitter.x = that.UFO_horizontal_shadow.x;
-   that.lightEmitter.start(false, 1600, 20, 0);
-  },
 
-
-  updateUFO: function(that) {
+  updateUFO: function(that){
     if(that.enemy_events_state.UFO == true && that.UFO_round < 1){
       if(that.UFO_move == false){
         this.__moveUFO(that);

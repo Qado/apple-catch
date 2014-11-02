@@ -7,15 +7,10 @@ var play_state = {
     game.physics.p2.setImpactEvents(true);
     game.physics.p2.updateBoundsCollisionGroup();
     game.physics.p2.gravity.y = 2000;
-    game.physics.p2.defaultRestitution = 0.999;
     this.cursors = game.input.keyboard.createCursorKeys();
     this.spacekey = game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
     this.worldX = game.world.width;
     this.worldY = game.world.height;
-    
-    //Adds the enemy group to the game
-    this.effects = game.add.group();
-    this.effects.enableBody = true;
     
     //Sets up collision groups for sprites
     this.basket_collision_group = game.physics.p2.createCollisionGroup();
@@ -26,11 +21,16 @@ var play_state = {
     this.enemy_collision_group = game.physics.p2.createCollisionGroup();
 
     //Initializes each state of the game
+    world_events.init(play_state);
     enemy_events.init(play_state);
     filters.init(play_state);
     flowers.init(play_state);
     world.init(play_state);
-    world_events.init(play_state);
+
+    this.fade_screen = game.add.sprite(800, 450,'black_screen');
+    this.fade_screen.anchor.setTo(0.5, 0.5);
+    this.fade_screen.alpha = 1;
+    game.add.tween(this.fade_screen).to( { alpha: 0 }, 5000, Phaser.Easing.Linear.Out, true);
     
     //Creating newton as a sprite and adding properties to him.
     this.newton = game.add.sprite(800, 0, 'newton');
@@ -52,21 +52,16 @@ var play_state = {
     game.physics.p2.enable(this.basket);
     this.basket.physicsBodyType = Phaser.Physics.P2JS;
     this.basket.body.setRectangle(150, 100);
-    console.log(this.basket.body);
     this.basket.body.setCollisionGroup(this.basket_collision_group);
     this.basket.anchor.set(-0.15, -0.10);
     this.basket.body.fixedRotation = true;
-    game.camera.follow(this.newton);
     
-    game.physics.p2.createLockConstraint(this.basket, this.newton, [0, 0], 0);
+    game.physics.p2.createLockConstraint(this.basket, this.newton, [0, 0], 1000);
 
     //I played around with the world alpha to see what it would look like when
     //I start it and I'm not really feeling it that much...
 
-    //game.world.scale.x = 0.5;
-    //game.world.scale.y = 0.5;
-    //game.add.tween(game.world.scale).to( { x: 1 }, 1500, Phaser.Easing.Linear.Out, true);
-    //game.add.tween(game.world.scale).to( { y: 1 }, 1500, Phaser.Easing.Linear.Out, true);
+    game.add.tween(menu_state.fade_screen).to( { alpha: 0 }, 2500, Phaser.Easing.Linear.Out, true);
     
     this.coin = game.add.sprite(0, 0, 'coin');
     this.coin.animations.add('spin', [1, 2, 3, 4, 5, 6, 5, 4, 3, 2], 17.5, true);
@@ -79,11 +74,9 @@ var play_state = {
     this.poison_theme = game.add.audio('poison-song');
     this.normal_theme.play();
     
-    this.collision_sound = game.add.audio('collision-sound');
+    this.punch = game.add.audio('collision-sound');
 
     this.setnewtonGravity('day');
-   
-    console.log(game.world.volume);
 
     this.left_bush.body.collides(this.newton_collision_group, world_events.shakeLeftBush, this);
     this.right_bush.body.collides(this.newton_collision_group, world_events.shakeRightBush, this);
@@ -136,7 +129,7 @@ var play_state = {
     }
     this.spacekey.onDown.add(this.newtonJump, this);
   },
-  
+
   setnewtonGravity: function(type){
     if(type == 'day'){
       this.newton.body.data.gravityScale = 1;
@@ -186,7 +179,7 @@ var play_state = {
 
   killNewton: function(){
     if (this.newton.dead == false){
-      this.collision_sound.play();
+      this.punch.play();
       this.newton.dead = true;
       this.newton.kill();
       game.physics.p2.createLockConstraint(this.basket, this.newton, [0, 0], 0);
@@ -195,14 +188,17 @@ var play_state = {
   },
   
   update: function() {
-    enemy_events.updateRaven(play_state);
     enemy_events.updateUFO(play_state);
     filters.updateFilter(play_state);
     apples.updateApple(play_state);
     world_events.updateWorld(play_state);
+    sequencer.updateSequencer(play_state);
+
+    if(this.enemy_events_state.raven_born == true && this.newton.dead == false) {
+      enemy_events.updateRaven(play_state);
+    }
     
     if(this.newton.dead == false) {
-      sequencer.updateSequencer(play_state);
       this.control(play_state);
     }
   },

@@ -3,8 +3,9 @@ var load_state = {
     preload: function() {
 
       game.load.script('filter', 'phaser-master/filters/Marble.js');
-      //game.load.bitmapFont('idolwild', 'assets/fonts/idolwild-webfont.ttf', 'assets/fonts/idolwild-webfont.woff');
-      game.stage.backgroundColor = '#C2E7FF';
+      game.load.bitmapFont('idolwild', 'assets/fonts/idolwild.png', 'assets/fonts/idolwild.fnt');
+      game.stage.backgroundColor = '#000000';
+      
 
       //Loading Images//
       
@@ -20,6 +21,9 @@ var load_state = {
       game.load.image('rotten-apple', 'assets/images/sprites/apples/rotten-apple.png');
       game.load.image('golden-apple', 'assets/images/sprites/apples/golden-apple.png');
       game.load.image('poisoned-apple', 'assets/images/sprites/apples/poisoned-apple.png');
+      
+
+      game.load.image('tunnel_screen', 'assets/images/sprites/etc/tunnel_screen.png');
       
       //Newton//
       game.load.image('basket', 'assets/images/sprites/newton/basket.png');
@@ -75,8 +79,9 @@ var load_state = {
       game.load.spritesheet('beehive', 'assets/images/sprites/enemies/beehive/beehive_spritesheet.png', 122, 122);
       
       //Raven//
-      game.load.spritesheet('raven', 'assets/images/sprites/enemies/raven/raven_spritesheet.png', 125, 134);
+      game.load.spritesheet('raven', 'assets/images/sprites/enemies/raven/raven_spritesheet_2.png', 130, 135);
       game.load.spritesheet('egg', 'assets/images/sprites/enemies/raven/raven_egg_spritesheet.png', 60, 92);
+      game.load.image('yolk', 'assets/images/sprites/enemies/raven/egg_yolk.png');
 
       //Flowers//
       game.load.image('flower_1', 'assets/images/sprites/flowers/white_daisy.png');
@@ -88,8 +93,11 @@ var load_state = {
       game.load.image('mushroom_1', 'assets/images/sprites/flowers/mushroom.png');
       game.load.image('mushroom_2', 'assets/images/sprites/flowers/glow_mushroom.png');
 
-      game.load.spritesheet('play_button', 'assets/images/sprites/etc/play_button.png', 172, 106);
-      game.load.spritesheet('music_button', 'assets/images/sprites/etc/music_button.png', 172, 106);
+      game.load.spritesheet('s_blank_button', 'assets/images/sprites/etc/small_blank_button.png', 172, 106);
+      
+      //game.load.spritesheet('play_button', 'assets/images/sprites/etc/play_button.png', 172, 106);
+      //game.load.spritesheet('music_button', 'assets/images/sprites/etc/music_button.png', 172, 106);
+      //game.load.spritesheet('settings_button', 'assets/images/sprites/etc/settings_button.png', 337, 105);
       
       //Loading Audio//
       game.load.audio('theme-song', 'assets/sounds/game_theme.mp3');
@@ -102,6 +110,7 @@ var load_state = {
       game.load.audio('collision-sound', 'assets/sounds/collide.wav');
       game.load.audio('flap', 'assets/sounds/raven_flap.wav');
       game.load.audio('caw', 'assets/sounds/raven_caw.wav');
+      game.load.audio('egg-crush', 'assets/sounds/egg_smash.wav');
       game.load.audio('canon-fire', 'assets/sounds/fire_canon.wav');
       game.load.audio('thunder_1', 'assets/sounds/thunder_1.wav');
       game.load.audio('thunder_2', 'assets/sounds/thunder_2.wav');

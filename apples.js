@@ -20,18 +20,21 @@ var apples = {
         'type': 'red-apple',
         'worth': 1,
         'effect': null,
+        'rarity': 3
         'sound': that.red_score_sound
       },
       '2': {
         'type': 'green-apple',
         'worth': 2,
         'effect': null,
+        'rarity': 2
         'sound': that.green_score_sound
       },
       '3': {
         'type': 'golden-apple',
         'worth': 4,
         'effect': null,
+        'rarity': 1
         'sound': that.golden_score_sound
       },
       '4': {

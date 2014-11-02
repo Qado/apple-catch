@@ -2,6 +2,7 @@ var sequencer = {
 
   updateSequencer: function(that){
   
+    
     //Hedgehog Sequencer//
     if(that.score >= 0 && that.enemy_events_state.hedgehog == false){
       if(utilities.randomizer(1, 200) == 1){
@@ -25,11 +26,12 @@ var sequencer = {
     
     //Raven Sequencer//
     if(that.score >= 0 && that.enemy_events_state.raven == false){
-      if(utilities.randomizer(1, 500) == 1){
+      if(utilities.randomizer(1, 1) == 1){
         enemy_events.spawnRaven(play_state);
       }
     }
     
+    /*
     //CanonBall Sequencer//
     if(that.score >= 0 && that.enemy_events_state.canon == false){
       if(utilities.randomizer(1, 1000) == 1){
@@ -39,8 +41,8 @@ var sequencer = {
     
     //Storm Sequencer//
     if(that.score >= 0 && that.world_events_state.storm == false){
-      if(utilities.randomizer(1, 1000) == 1){
-        enemy_events.startStorm(play_state);
+      if(utilities.randomizer(1, 1) == 1){
+        world_events.startStorm(play_state);
       }
     }
     
@@ -49,6 +51,6 @@ var sequencer = {
       if(utilities.randomizer(1, 1000) == 1){
         enemy_events.spawnUFO(play_state);
       }
-    }
+    }*/
   }
 };

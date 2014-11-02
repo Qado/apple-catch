@@ -9,7 +9,10 @@ var world_events = {
     that.world_events_state.night = false;
     that.world_events_state.lightning = false;
     that.world_events_state.day = true;
-    
+   
+    that.effects = game.add.group();
+    that.effects.enableBody = true;
+
     //Clouds
     that.cloud_cover = 985;
     that.cloud_tint = '0xffffff';
@@ -126,12 +129,6 @@ var world_events = {
       game.time.events.add(Phaser.Timer.SECOND * (offTime + lightning_factor),  this.flashOff, this, that, offTime);
     }
     game.time.events.add(Phaser.Timer.SECOND * flashTime,  this.killLightning, this, that);
-
-    /*var flash = game.add.tween(that.lightning)
-      .to({ alpha: that.strike_intensity }, 100, Phaser.Easing.Linear.None, true) //on
-      .to({ alpha: 0 }, 200, Phaser.Easing.Linear.None, true) //off
-
-*/
   },
   
   flashOn: function(that, onTime){
@@ -260,43 +257,56 @@ var world_events = {
   setCloud: function(num){
     return 'cloud_' + num;
   },
+  
+  createCloudySky: function(that){
+    that.cloud_speed = 1;
+    that.cloud_cover = 1;
+
+    for(i=0; i > 20; i++){
+      this.createCloud(that);
+    }
+  },
+  
 
   createCloud: function(that){
+    var cloud_x = utilities.randomizer(0, 1800);
     var cloud_y = utilities.randomizer(0, that.worldY * 0.55);
     var cloud_scale = 0.60 - (cloud_y/that.worldY * 0.55);
     var cloud_choice = utilities.randomizer(1, 3);
-    var cloud = that.effects.create(1800, cloud_y, this.setCloud(cloud_choice));
-    cloud.tint = that.cloud_tint;
+    var cloud = that.effects.create(cloud_x, cloud_y, this.setCloud(cloud_choice));
+    var cloud_alpha = utilities.randomizer(1, 8)/10;
+    var cloud_time = (1 - cloud_scale) * (that.cloud_speed * cloud_x/1800);
+    var cloud_fadein_time = utilities.randomizer(1, (cloud_time * 0.001)/8);
+    var cloud_fadeout_time = utilities.randomizer(1, cloud_time);
     
     //Putting cloud in front of moon.
     that.effects.addAt(cloud, 2);
     cloud.scale.x = cloud_scale;
     cloud.scale.y = cloud_scale;
+    cloud.tint = that.cloud_tint;
+    cloud.alpha = 0;
     cloud.anchor.setTo(0.5, 0.5);
-
-    //Setting cloud to random alpha, and adding properties.
-    cloud.alpha = utilities.randomizer(0, 7)/10;
     game.physics.p2.enable(cloud);
     cloud.body.gravityScale = 0;
     cloud.enableBody = true;
     cloud.collideWorldBounds = true;
     cloud.body.kinematic = true;
-    
-    //If there is a storm, make more clouds and make them gray.
-    if(that.world_events_state.storm == true){
-    }else{
-    }   
-    
-    var cloud_time = (1 - cloud_scale) * that.cloud_speed;
 
     //Moving the cloud across the sky.
+    game.add.tween(cloud).to( { alpha: cloud_alpha }, cloud_fadein_time * 1000, Phaser.Easing.Linear.None, true);
     game.add.tween(cloud).to( { x: -300 }, cloud_time, Phaser.Easing.Linear.None, true);
     
-    
     //Killing clouds once they make it through the scene. 
-    game.time.events.add(Phaser.Timer.SECOND * cloud_time * 0.001, this.killCloud, that, that, cloud);
+    game.time.events.add(Phaser.Timer.SECOND * (cloud_time * 0.001) / 2 , this.fadeOutCloud, that, that, cloud, cloud_fadeout_time);
+    game.time.events.add(Phaser.Timer.SECOND * (cloud_time * 0.001) + 1, this.killCloud, that, that, cloud);
   },
+
+  fadeOutCloud: function(that, cloud, cloud_fadeout_time){
   
+    var cloud_alpha = utilities.randomizer(0, 5)/10;
+    game.add.tween(cloud).to( { alpha: cloud_alpha }, cloud_fadeout_time * 1000, Phaser.Easing.Linear.None, true);
+  },
+
   killCloud: function(that, cloud){
     cloud.destroy();
   },
@@ -339,13 +349,13 @@ var world_events = {
 
   updateWorld: function(that){
     if(utilities.randomizer(1, 1000) > that.cloud_cover){
-      this.createCloud(play_state);
+      this.createCloud(that);
     }
     
-    if(that.world_events_state.storm == true && that.world_events_state.lightning == false){
+    /*if(that.world_events_state.storm == true && that.world_events_state.lightning == false){
       if(utilities.randomizer(1, 300) == 300){
         this.startLightning(that); 
       }
-    } 
+    }*/ 
   }
 };

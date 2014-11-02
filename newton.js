@@ -87,6 +87,8 @@ var newton = {
     that.newton_hair.body.setCollisionGroup(that.newton_collision_group);
     that.newton_hair.fixedBody = false;
 
+
+
     game.physics.p2.createLockConstraint(that.newton_eyes, that.newton_head, [25, -10], 0);
     game.physics.p2.createLockConstraint(that.newton_mouth, that.newton_head, [25, 2], 0);
     game.physics.p2.createLockConstraint(that.newton_hair, that.newton_head, [0, 2], 0);
