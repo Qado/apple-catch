@@ -8,7 +8,7 @@ var world = {
     that.ground = game.add.sprite(800, 850, 'background_0');
     game.physics.p2.enable(that.ground);
     that.ground.physicsBodyType = Phaser.Physics.P2JS
-    that.ground.body.mass = 1e7;
+    //that.ground.body.mass = 1e7;
     that.ground.body.setCollisionGroup(that.ground_collision_group);
     that.ground.body.static = true;
     that.ground.anchor.setTo(0.5, 0.5);

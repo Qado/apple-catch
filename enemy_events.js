@@ -2,12 +2,22 @@ var enemy_events = {
 
   init: function(that){
     that.enemy_events_state = {};
+    
     that.enemy_events_state.hedgehog = false;
+    
     that.enemy_events_state.beehive = false;
+    
     that.enemy_events_state.raven = false;
     that.enemy_events_state.raven_born = false;
+    
     that.enemy_events_state.egg = false;
+    that.enemy_events_state.egg_cracked = false;
+    
+    that.enemy_events_state.yolk = false;
+    that.enemy_events_state.yolk_born = false;
+    
     that.enemy_events_state.canon = false;
+    
     that.enemy_events_state.UFO = false;
     that.enemy_events_state.UFO_beam = false;
 
@@ -17,6 +27,10 @@ var enemy_events = {
     that.enemy = game.add.group();
     that.enemy.enableBody = true;
     that.enemy.physicsBodyType = Phaser.Physics.P2JS;
+
+    that.egg_pieces = game.add.group();
+    that.egg_pieces.enableBody = true;
+    that.egg_pieces.physicsBodyType = Phaser.Physics.P2JS;
 
     that.raven_flap = game.add.audio('flap');
     that.raven_caw = game.add.audio('caw', 10);
@@ -74,7 +88,7 @@ var enemy_events = {
  
   __killHedgehog: function(that){
     that.enemy_events_state.hedgehog = false;
-    that.hedgehog.kill();
+    that.hedgehog.destroy();
   },
   
   spawnRaven: function(that){
@@ -112,7 +126,8 @@ var enemy_events = {
   },
 
   updateRaven: function(that){
-    if(Math.round(that.raven.body.x) - Math.round(that.newton.x) < 30 && that.enemy_events_state.egg == false){
+    var newton_distance = Math.abs(Math.round(that.raven.body.x) - Math.round(that.newton.x));
+    if(newton_distance < 30 && that.enemy_events_state.egg == false){
       this.dropEgg(that);
     }
   },
@@ -133,48 +148,139 @@ var enemy_events = {
     that.egg.body.collides(that.ground_collision_group, this.__crackEggGround, this);
   },
 
+  __crackEgg: function(that){
+ 
+    that.egg_piece1 = that.egg_pieces.create(that.egg.x, that.egg.y, 'egg_piece1');
+    game.world.addAt(that.egg_piece1, that.newton.z + 1);
+    that.egg_piece1.body.setCollisionGroup(that.egg_piece_collision_group);
+    that.egg_piece1.body.collides([that.egg_piece_collision_group, that.ground_collision_group]);
+    that.egg_piece1.body.mass = utilities.randomizer(1, 10000) * utilities.randomizer(1, 5);
+    
+    that.egg_piece2 = that.egg_pieces.create(that.egg.x, that.egg.y, 'egg_piece2');
+    game.world.addAt(that.egg_piece2, that.newton.z + 1);
+    that.egg_piece2.body.setCollisionGroup(that.egg_piece_collision_group);
+    that.egg_piece2.body.collides([that.egg_piece_collision_group, that.ground_collision_group]);
+    that.egg_piece2.body.mass = utilities.randomizer(1, 10000) * utilities.randomizer(1, 5);
+    
+    that.egg_piece3 = that.egg_pieces.create(that.egg.x, that.egg.y, 'egg_piece3');
+    game.world.addAt(that.egg_piece3, that.newton.z + 1);
+    that.egg_piece3.body.setCollisionGroup(that.egg_piece_collision_group);
+    that.egg_piece3.body.collides([that.egg_piece_collision_group, that.ground_collision_group]);
+    that.egg_piece3.body.mass = utilities.randomizer(1, 10000) * utilities.randomizer(1, 5);
+    
+    that.egg_piece4 = that.egg_pieces.create(that.egg.x, that.egg.y, 'egg_piece4');
+    game.world.addAt(that.egg_piece4, that.newton.z + 1);
+    that.egg_piece4.body.setCollisionGroup(that.egg_piece_collision_group);
+    that.egg_piece4.body.collides([that.egg_piece_collision_group, that.ground_collision_group]);
+    that.egg_piece4.body.mass = utilities.randomizer(1, 10000) * utilities.randomizer(1, 5);
+    
+    that.egg_piece5 = that.egg_pieces.create(that.egg.x, that.egg.y, 'egg_piece5');
+    game.world.addAt(that.egg_piece5, that.newton.z + 1);
+    that.egg_piece5.body.setCollisionGroup(that.egg_piece_collision_group);
+    that.egg_piece5.body.collides([that.egg_piece_collision_group, that.ground_collision_group]);
+    that.egg_piece5.body.mass = utilities.randomizer(1, 10000) * utilities.randomizer(1, 5);
+    
+    that.egg_piece6 = that.egg_pieces.create(that.egg.x, that.egg.y, 'egg_piece6');
+    game.world.addAt(that.egg_piece6, that.newton.z + 1);
+    that.egg_piece6.body.setCollisionGroup(that.egg_piece_collision_group);
+    that.egg_piece6.body.collides([that.egg_piece_collision_group, that.ground_collision_group]);
+    that.egg_piece6.body.mass = utilities.randomizer(1, 10000) * utilities.randomizer(1, 5);
+    
+    that.egg_piece7 = that.egg_pieces.create(that.egg.x, that.egg.y, 'egg_piece7');
+    game.world.addAt(that.egg_piece7, that.newton.z + 1);
+    that.egg_piece7.body.setCollisionGroup(that.egg_piece_collision_group);
+    that.egg_piece7.body.collides([that.egg_piece_collision_group, that.ground_collision_group]);
+    that.egg_piece7.body.mass = utilities.randomizer(1, 10000) * utilities.randomizer(1, 5);
+  },
+
   __crackEggNewton: function(){
     that = play_state;
-    that.egg_crush.play();
-    that.egg.animations.play('crack');
-    game.time.events.add(Phaser.Timer.SECOND * 1, this.__killEgg, this, that);
+
+    if(that.enemy_events_state.egg_cracked == false){
+      that.enemy_events_state.egg_cracked = true;
+      that.egg_crush.play();
+      that.egg.animations.play('crack');
+      this.__crackEgg(that);
+      this.__killEgg(that);
+    }
   },
   
   __crackEggGround: function(){
     that = play_state;
-    that.egg_crush.play();
-    that.egg.animations.play('crack');
-    game.time.events.add(Phaser.Timer.SECOND * 0.25, this.__spawnYolk, this, that);
-    game.time.events.add(Phaser.Timer.SECOND * 2, this.__killEgg, this, that);
+
+    if(that.enemy_events_state.egg_cracked == false){
+      that.enemy_events_state.egg_cracked = true;
+      that.egg_crush.play();
+      that.egg.animations.play('crack');
+      this.__crackEgg(that);
+      this.__spawnYolk(that);
+      this.__killEgg(that);
+    }
   },
 
   __spawnYolk: function(that){
-    that.yolk = game.add.sprite(that.egg.x, that.egg.y, 'yolk');
-    that.yolk.anchor.setTo(0.5, 1);
+    that.yolk = game.add.sprite(that.egg.x, (that.egg.y + 30), 'yolk');
+    game.physics.p2.enable(that.yolk);
+    that.yolk.enableBody = true;
+    that.yolk.physicsBodyType = Phaser.Physics.P2JS;
+    that.yolk.body.static = true;
+    that.yolk.body.data.gravityScale = 0;
+    that.yolk.body.setCollisionGroup(that.yolk_collision_group);
+    that.yolk.body.collides(that.newton_collision_group);
+    that.yolk.anchor.setTo(0.5, 0);
     that.yolk.alpha = 0;
     game.add.tween(that.yolk.scale).to( { x: 1 }, 500, Phaser.Easing.Linear.Out, true); 
     game.add.tween(that.yolk.scale).to( { y: 0.75 }, 500, Phaser.Easing.Linear.Out, true); 
     game.add.tween(that.yolk).to( { alpha: 0.5 }, 500, Phaser.Easing.Linear.Out, true); 
+    game.time.events.add(Phaser.Timer.SECOND * 0.5, this.__fadeawayYolk, this, that);
+
   },
 
   __fadeawayYolk: function(that){
     game.add.tween(that.yolk).to( { alpha: 0 }, 10000, Phaser.Easing.Linear.Out, true); 
-    game.time.events.add(Phaser.Timer.SECOND * 10, this.__destroyYolk, this, that);
+    game.time.events.add(Phaser.Timer.SECOND * 10, this.__killYolk, this, that);
   },
 
-  __destroyYolk: function(that){
-    that.yolk.destory();
+  __killYolk: function(that){
+    that.yolk.destroy();
+    that.enemy_events_state.yolk = false;
   },
 
   __killEgg: function(that){
     that.egg.destroy();
     that.enemy_events_state.egg = false;
+    that.enemy_events_state.egg_cracked = false;
+    
+    game.add.tween(that.egg_piece1).to( { alpha: 0 }, this.__shellFadeTime(), Phaser.Easing.Linear.Out, true); 
+    game.add.tween(that.egg_piece2).to( { alpha: 0 }, this.__shellFadeTime(), Phaser.Easing.Linear.Out, true); 
+    game.add.tween(that.egg_piece3).to( { alpha: 0 }, this.__shellFadeTime(), Phaser.Easing.Linear.Out, true); 
+    game.add.tween(that.egg_piece4).to( { alpha: 0 }, this.__shellFadeTime(), Phaser.Easing.Linear.Out, true); 
+    game.add.tween(that.egg_piece5).to( { alpha: 0 }, this.__shellFadeTime(), Phaser.Easing.Linear.Out, true); 
+    game.add.tween(that.egg_piece6).to( { alpha: 0 }, this.__shellFadeTime(), Phaser.Easing.Linear.Out, true); 
+    game.add.tween(that.egg_piece7).to( { alpha: 0 }, this.__shellFadeTime(), Phaser.Easing.Linear.Out, true);
+    game.time.events.add(Phaser.Timer.SECOND * 2.5, this.__killEggShell, this, that);
+  },
+
+  __killEggShell: function(that){
+  
+    that.egg_piece1.destroy();
+    that.egg_piece2.destroy();
+    that.egg_piece3.destroy();
+    that.egg_piece4.destroy();
+    that.egg_piece5.destroy();
+    that.egg_piece6.destroy();
+    that.egg_piece7.destroy();
+  
+  },
+
+  __shellFadeTime: function(that){
+    return utilities.randomizer(1.0, 2.5) * 1000;
   },
 
   __killRaven: function(that){
     that.enemy_events_state.raven = false;
     that.enemy_events_state.raven_born = false;
-    that.raven.kill();
+    that.raven.destroy();
   },
 
   spawnBeehive: function(that){
@@ -215,9 +321,10 @@ var enemy_events = {
   },
   __killBeehive: function(that){
     that.enemy_events_state.beehive = false;
-    that.beehive.kill();
+    that.beehive.destroy();
   },
 
+//-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------\\
   spawnCanonBall: function(that) {
     that.enemy_events_state.canon_ball = true;
     that.fake_canon_ball = that.effects.create(0, 700, 'canon-ball');

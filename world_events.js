@@ -104,7 +104,7 @@ var world_events = {
     that.cloud_tint = '0x999999';
     that.cloud_speed = 90000;
     that.cloud_cover = 475;
-    game.world.addAt(that.storm_darkness, 18);
+    game.world.addAt(that.storm_darkness, that.newton.z + 2);
     game.add.tween(that.storm_darkness).to( { alpha: 0.45 }, 15000, Phaser.Easing.Linear.None, true);
     game.time.events.add(Phaser.Timer.SECOND * (that.storm_time * 0.1), this.startRain, that, that);
     game.time.events.add(Phaser.Timer.SECOND * that.storm_time, this.stopStorm, this, that);
@@ -219,7 +219,7 @@ var world_events = {
 
   startNight: function(that){
     that.world_events_state.night = true;
-    game.world.addAt(that.darkness, 18);
+    game.world.addAt(that.darkness, that.newton.z + 10);
     this.stopDay(that);
     game.add.tween(that.moon).to( { x: 1600 }, 45000, Phaser.Easing.Circular.None, true);
     game.add.tween(that.moon).to( { y: -200 }, 45000, Phaser.Easing.Circular.None, true);

@@ -19,6 +19,8 @@ var play_state = {
     this.ground_collision_group = game.physics.p2.createCollisionGroup();
     this.apple_collision_group = game.physics.p2.createCollisionGroup();
     this.enemy_collision_group = game.physics.p2.createCollisionGroup();
+    this.egg_piece_collision_group = game.physics.p2.createCollisionGroup();
+    this.yolk_collision_group = game.physics.p2.createCollisionGroup();
 
     //Initializes each state of the game
     world_events.init(play_state);
@@ -27,24 +29,20 @@ var play_state = {
     flowers.init(play_state);
     world.init(play_state);
 
-    this.fade_screen = game.add.sprite(800, 450,'black_screen');
-    this.fade_screen.anchor.setTo(0.5, 0.5);
-    this.fade_screen.alpha = 1;
-    game.add.tween(this.fade_screen).to( { alpha: 0 }, 5000, Phaser.Easing.Linear.Out, true);
-    
     //Creating newton as a sprite and adding properties to him.
     this.newton = game.add.sprite(800, 0, 'newton');
     game.physics.p2.enable(this.newton);
     game.world.addAt(this.newton, 100);
     this.newton.physicsBodyType = Phaser.Physics.P2JS
     this.newton.body.setCollisionGroup(this.newton_collision_group);
-    this.newton.speed = 750;
+    this.newton.speed = 1000;
     this.newton.anchor.set(0.5, 0.5);
     this.newton.body.fixedRotation = true;
     this.newton.body.mass = 175;
     this.newton.animations.add('walk', [0, 1, 2, 1], 15, false);
     
     this.newton.poisoned = false;
+    this.newton.slip = false;
     this.newton.dead = false;
     
     this.basket = game.add.sprite(this.newton.x, this.newton.y, 'basket');
@@ -56,12 +54,15 @@ var play_state = {
     this.basket.anchor.set(-0.15, -0.10);
     this.basket.body.fixedRotation = true;
     
+    this.fade_screen = game.add.sprite(800, 450,'black_screen');
+    this.fade_screen.anchor.setTo(0.5, 0.5);
+    game.world.addAt(this.fade_screen, this.newton.z + 1);
+    this.fade_screen.alpha = 1;
+    game.add.tween(this.fade_screen).to( { alpha: 0 }, 5000, Phaser.Easing.Linear.Out, true);
     game.physics.p2.createLockConstraint(this.basket, this.newton, [0, 0], 1000);
 
     //I played around with the world alpha to see what it would look like when
     //I start it and I'm not really feeling it that much...
-
-    game.add.tween(menu_state.fade_screen).to( { alpha: 0 }, 2500, Phaser.Easing.Linear.Out, true);
     
     this.coin = game.add.sprite(0, 0, 'coin');
     this.coin.animations.add('spin', [1, 2, 3, 4, 5, 6, 5, 4, 3, 2], 17.5, true);
@@ -84,7 +85,8 @@ var play_state = {
     this.newton.body.collides(this.enemy_collision_group, this.killNewton, this);
     this.basket.body.collides(this.apple_collision_group);
     this.ground.body.collides(this.newton_collision_group, this.registerNewtonGroundContact, this);
-    this.ground.body.collides([this.enemy_collision_group, this.apple_collision_group]);
+    this.newton.body.collides(this.yolk_collision_group, this.__startNewtonSlip, this);
+    this.ground.body.collides([this.enemy_collision_group, this.apple_collision_group, this.egg_piece_collision_group]);
 
     apples.init(play_state);
 
@@ -98,6 +100,15 @@ var play_state = {
   
   registerNewtonGroundContact: function(){
     this.newton.touching_ground = true;
+  },
+
+  __startNewtonSlip: function(){
+    this.newton.slip = true;
+    this.yolk.destroy();
+  },
+
+  __stopNewtonSlip: function(){
+    this.newton.slip = false;
   },
 
   newtonJump: function(newton){
@@ -121,6 +132,11 @@ var play_state = {
         this.newton.body.velocity.x = 0;
       }
     }
+    if (this.newton.slip == true){
+      console.log('slippin');
+      this.newton.body.velocity.x = 1100 * this.newton.scale.x;
+      game.time.events.add(Phaser.Timer.SECOND * 1, this.__stopNewtonSlip, this)
+    }
     if(this.world_events_state.night == true && this.newton.gravity == 'day'){
       this.setnewtonGravity('night');
     }
@@ -143,26 +159,17 @@ var play_state = {
  
   moveRight: function() { 
     if(this.newton.x <= 1600){
-      if(this.world_events_state.rain == false) {
-        this.newton.body.moveRight(this.newton.speed);
-      }
-      if(this.world_events_state.rain == true) {
-        this.newton.body.velocity.x += this.newton.speed;
-      }
+      this.newton.body.moveRight(this.newton.speed);
       this.newton.animations.play('walk');
       this.newton.scale.x = 1;
       this.basket.scale.x = 1;
     }
   },
 
+
   moveLeft: function(){
     if(this.newton.x >= 0){
-      if(this.world_events_state.rain == false) {
-        this.newton.body.moveLeft(this.newton.speed);
-      }
-      if(this.world_events_state.rain == true) {
-        this.newton.body.velocity.x -= this.newton.speed;
-      }
+      this.newton.body.moveLeft(this.newton.speed);
       this.newton.animations.play('walk');
       this.newton.scale.x = -1;
       this.basket.scale.x = -1;
@@ -181,8 +188,8 @@ var play_state = {
     if (this.newton.dead == false){
       this.punch.play();
       this.newton.dead = true;
-      this.newton.kill();
-      game.physics.p2.createLockConstraint(this.basket, this.newton, [0, 0], 0);
+      this.newton.destroy();
+      game.physics.p2.createLockConstraint(this.basket, this.newton, [0, 0], 0).destroy;
       newton.init(play_state);
     }
   },
@@ -190,9 +197,8 @@ var play_state = {
   update: function() {
     enemy_events.updateUFO(play_state);
     filters.updateFilter(play_state);
-    apples.updateApple(play_state);
+    //apples.updateApple(play_state);
     world_events.updateWorld(play_state);
-    sequencer.updateSequencer(play_state);
 
     if(this.enemy_events_state.raven_born == true && this.newton.dead == false) {
       enemy_events.updateRaven(play_state);
@@ -200,6 +206,7 @@ var play_state = {
     
     if(this.newton.dead == false) {
       this.control(play_state);
+      sequencer.updateSequencer(play_state);
     }
   },
   

@@ -20,32 +20,32 @@ var apples = {
         'type': 'red-apple',
         'worth': 1,
         'effect': null,
-        'rarity': 3
+        'rarity': 3,
         'sound': that.red_score_sound
       },
       '2': {
         'type': 'green-apple',
         'worth': 2,
         'effect': null,
-        'rarity': 2
+        'rarity': 2,
         'sound': that.green_score_sound
       },
       '3': {
         'type': 'golden-apple',
         'worth': 4,
         'effect': null,
-        'rarity': 1
+        'rarity': 1,
         'sound': that.golden_score_sound
       },
       '4': {
         'type': 'rotten-apple',
-        'worth': -4,
+        'worth': 4,
         'effect': null,
         'sound': that.poison_sound
       },
       '5': {
         'type': 'poisoned-apple',
-        'worth': -8,
+        'worth': 8,
         'effect': 'poisoned',
         'sound': that.poison_sound
       }
@@ -111,7 +111,9 @@ var apples = {
     apple.enableBody = true;
     apple.physicsBodyType = Phaser.Physics.P2JS;
     this.growApple(that, apple);
+    apple.body.collides(that.ground_collision_group);
     apple.body.collides(that.basket_collision_group, this.collectApple, this);
+    game.time.events.add(Phaser.Timer.SECOND * 10, this.fadeApple, this, that, apple);
     game.time.events.add(Phaser.Timer.SECOND * 15, this.killApple, this, that, apple);
   },
 
@@ -156,7 +158,6 @@ var apples = {
   },
 
   defineApple: function(that, apple, apple_data){
-    //apple.body.static = true;
     apple.scale.x = 0.1;
     apple.scale.y = 0.1;
     apple.anchor.setTo(0.5, 0);
@@ -164,7 +165,7 @@ var apples = {
     apple.worth = apple_data.worth;
     apple.effect = apple_data.effect;
     apple.sound = apple_data.sound;
-    game.world.addAt(apple, 15);
+    game.world.addAt(apple, that.newton.z + 1);
     that.apple_count += 1;
     game.physics.p2.enable(apple);
     apple.body.data.gravityScale = 0;
@@ -181,7 +182,7 @@ var apples = {
   },     
 
   dropApple: function(that, apple) {
-    apple.body.static = false;
+    apple.anchor.setTo(0, 0);
     
     if(that.newton.poisoned == true){
       apple.body.data.gravityScale = 0.01;
@@ -202,6 +203,10 @@ var apples = {
       .to({ x: '-5' }, 50, Phaser.Easing.Linear.None)
       .start();
     game.time.events.add(Phaser.Timer.SECOND * 2.5, this.dropApple, this, that, apple);
+  },
+
+  fadeApple: function(that, apple){
+    game.add.tween(apple).to({ alpha: 0 }, utilities.randomizer(1000, 5000), Phaser.Easing.Linear.In, true);
   },
   
   killApple: function(that, apple) {

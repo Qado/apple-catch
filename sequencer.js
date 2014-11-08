@@ -37,7 +37,7 @@ var sequencer = {
       if(utilities.randomizer(1, 1000) == 1){
         enemy_events.spawnCanonBall(play_state);
       }
-    }
+    } 
     
     //Storm Sequencer//
     if(that.score >= 0 && that.world_events_state.storm == false){
@@ -46,6 +46,7 @@ var sequencer = {
       }
     }
     
+    /*
     //UFO Sequencer// 
     if(that.score >= 0 && that.enemy_events_state.UFO == false){
       if(utilities.randomizer(1, 1000) == 1){

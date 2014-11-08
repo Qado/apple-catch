@@ -5,7 +5,6 @@ var load_state = {
       game.load.script('filter', 'phaser-master/filters/Marble.js');
       game.load.bitmapFont('idolwild', 'assets/fonts/idolwild.png', 'assets/fonts/idolwild.fnt');
       game.stage.backgroundColor = '#000000';
-      
 
       //Loading Images//
       
@@ -79,9 +78,18 @@ var load_state = {
       game.load.spritesheet('beehive', 'assets/images/sprites/enemies/beehive/beehive_spritesheet.png', 122, 122);
       
       //Raven//
-      game.load.spritesheet('raven', 'assets/images/sprites/enemies/raven/raven_spritesheet_2.png', 130, 135);
-      game.load.spritesheet('egg', 'assets/images/sprites/enemies/raven/raven_egg_spritesheet.png', 60, 92);
-      game.load.image('yolk', 'assets/images/sprites/enemies/raven/egg_yolk.png');
+      game.load.spritesheet('raven', 'assets/images/sprites/enemies/raven&egg/raven_spritesheet.png', 130, 135);
+      game.load.spritesheet('egg', 'assets/images/sprites/enemies/raven&egg/raven_egg_spritesheet.png', 60, 92);
+
+      //Egg-Pieces
+      game.load.image('yolk', 'assets/images/sprites/enemies/raven&egg/egg_pieces/egg_yolk.png');
+      game.load.image('egg_piece1', 'assets/images/sprites/enemies/raven&egg/egg_pieces/raven_egg_piece1.png');
+      game.load.image('egg_piece2', 'assets/images/sprites/enemies/raven&egg/egg_pieces/raven_egg_piece2.png');
+      game.load.image('egg_piece3', 'assets/images/sprites/enemies/raven&egg/egg_pieces/raven_egg_piece3.png');
+      game.load.image('egg_piece4', 'assets/images/sprites/enemies/raven&egg/egg_pieces/raven_egg_piece4.png');
+      game.load.image('egg_piece5', 'assets/images/sprites/enemies/raven&egg/egg_pieces/raven_egg_piece5.png');
+      game.load.image('egg_piece6', 'assets/images/sprites/enemies/raven&egg/egg_pieces/raven_egg_piece6.png');
+      game.load.image('egg_piece7', 'assets/images/sprites/enemies/raven&egg/egg_pieces/raven_egg_piece7.png');
 
       //Flowers//
       game.load.image('flower_1', 'assets/images/sprites/flowers/white_daisy.png');
@@ -122,7 +130,8 @@ var load_state = {
 
     create: function() {
 
-      game.state.start('menu');
+      game.stage.backgroundColor = '#C2E7FF';
+      game.state.start('play');
 
   }
 };

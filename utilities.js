@@ -12,6 +12,11 @@ var utilities  = {
     }
     return random_number
   },
+
+  setLayer: function(object, layer){
+  
+    game.world.addAt(object, that.newton.z + layer);
+  },
   
   setPatchPosition: function(patch){
     
