@@ -40,14 +40,6 @@ var world_events = {
     that.moon.scale.x = 2;
     that.moon.scale.y = 2;
 
-    //Darkness
-    that.darkness = that.effects.create(0, 0, 'black_screen');
-    that.darkness.alpha = 0;
-    
-    //Creating storm darkness
-    that.storm_darkness = that.effects.create(0, 0, 'black_screen');
-    that.storm_darkness.alpha = 0;
-
     //Creating lightning
     that.lightning = that.effects.create(0, 0, 'lightning');
     game.world.addAt(that.lightning, 1);
@@ -104,8 +96,9 @@ var world_events = {
     that.cloud_tint = '0x999999';
     that.cloud_speed = 90000;
     that.cloud_cover = 475;
-    game.world.addAt(that.storm_darkness, that.newton.z + 2);
-    game.add.tween(that.storm_darkness).to( { alpha: 0.45 }, 15000, Phaser.Easing.Linear.None, true);
+
+    game.add.tween(that.fade_screen).to({ alpha: '+0.25'}, 5000, Phaser.Easing.Linear.Out, true);
+
     game.time.events.add(Phaser.Timer.SECOND * (that.storm_time * 0.1), this.startRain, that, that);
     game.time.events.add(Phaser.Timer.SECOND * that.storm_time, this.stopStorm, this, that);
   },
@@ -158,7 +151,7 @@ var world_events = {
 
     if(that.world_events_state.rained == true){
       game.world.addAt(that.rainEmitter_2, that.background_2.z + 1);
-      game.world.addAt(that.rainEmitter_1, that.storm_darkness.z + 2);
+      game.world.addAt(that.rainEmitter_1, that.newton.z + 2);
       that.rainEmitter_2.start(false, 2000, 1000, that.storm_time * 100, true);
       that.rainEmitter_1.start(false, 2000, 1000, that.storm_time * 100, true);
     }else{
@@ -182,7 +175,7 @@ var world_events = {
     that.cloud_tint = '0xffffff';
     that.rainEmitter_2.start(true, 1600, 5, 0);
     that.rainEmitter_2.start(true, 1600, 5, 0)
-    game.add.tween(that.storm_darkness).to( { alpha: 0 }, 45000, Phaser.Easing.Linear.None, true);
+    game.add.tween(that.fade_screen).to({ alpha: '-0.25'}, 5000, Phaser.Easing.Linear.Out, true);
     game.add.tween(that.rainEmitter_1).to( { frequency: 1000 }, 75000, Phaser.Easing.Circular.None, true);
     game.add.tween(that.rainEmitter_2).to( { frequency: 1000 }, 75000, Phaser.Easing.Circular.None, true);
     game.add.tween(that.rainEmitter_1).to( { minParticleAlpha: 0 }, 30000, Phaser.Easing.Circular.None, true);
@@ -219,8 +212,8 @@ var world_events = {
 
   startNight: function(that){
     that.world_events_state.night = true;
-    game.world.addAt(that.darkness, that.newton.z + 10);
     this.stopDay(that);
+    game.add.tween(that.fade_screen).to({ alpha: '+0.5'}, 5000, Phaser.Easing.Linear.Out, true);
     game.add.tween(that.moon).to( { x: 1600 }, 45000, Phaser.Easing.Circular.None, true);
     game.add.tween(that.moon).to( { y: -200 }, 45000, Phaser.Easing.Circular.None, true);
     game.add.tween(that.moon.scale).to( { x: 1 }, 45000, Phaser.Easing.Circular.None, true);
@@ -231,7 +224,6 @@ var world_events = {
 
   stopNight: function(that){
     that.world_events_state.night = false;
-    game.add.tween(that.darkness).to( { alpha: 0 }, 5000, Phaser.Easing.Linear.None, true);
     game.add.tween(that.stars).to( { alpha: 0 }, 5000, Phaser.Easing.Linear.None, true);
     that.moon.x = 0;
     that.moon.y = 900;
@@ -240,6 +232,7 @@ var world_events = {
   startDay: function(that){
     that.enemy_events_state.day = true;
     this.stopNight(that);
+    game.add.tween(that.fade_screen).to({ alpha: '-0.5'}, 5000, Phaser.Easing.Linear.Out, true);
     game.add.tween(that.sun).to( { x: 1600 }, 45000, Phaser.Easing.Circular.None, true);
     game.add.tween(that.sun).to( { y: -200 }, 45000, Phaser.Easing.Circular.None, true);
     game.add.tween(that.sun.scale).to( { x: 2 }, 45000, Phaser.Easing.Circular.None, true);
@@ -248,7 +241,6 @@ var world_events = {
 
   stopDay: function(that){
     that.enemy_events_state.day = false;
-    game.add.tween(that.darkness).to( { alpha: 0.6 }, 5000, Phaser.Easing.Linear.None, true);
     game.add.tween(that.stars).to( { alpha: 0.75 }, 5000, Phaser.Easing.Linear.None, true);
     that.sun.x = 0;
     that.sun.y = 900;
@@ -352,10 +344,10 @@ var world_events = {
       this.createCloud(that);
     }
     
-    /*if(that.world_events_state.storm == true && that.world_events_state.lightning == false){
+    if(that.world_events_state.storm == true && that.world_events_state.lightning == false){
       if(utilities.randomizer(1, 300) == 300){
         this.startLightning(that); 
       }
-    }*/ 
+    } 
   }
 };

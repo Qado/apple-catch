@@ -121,7 +121,7 @@ var flowers = {
     var flower_position;
     var flower_size;
     var previous_flower = {};
-    var flower_amount = utilities.randomizer(30, 45);
+    var flower_amount = utilities.randomizer(20, 35);
     previous_flower.z = 'start';
 
     for(i = 0; i < flower_amount; i++){
@@ -130,7 +130,7 @@ var flowers = {
       flower_position = utilities.setPatchPosition(that.flower_patches_1[flower_patch]);
       flower_x = flower_position['x'];
       flower_y = flower_position['y'];
-      flower_name = flower_basket[utilities.randomizer(0, flower_basket.length)];
+      flower_name = flower_basket[utilities.randomizer(0, (flower_basket.length - 1))];
       flower_direction = utilities.randomizer(-1, 1, 0);
       flower_height = utilities.randomizer(4, 6) * 0.1;
       flower_size = 33.33 * flower_height;
@@ -138,9 +138,9 @@ var flowers = {
       flower = that.flowers.create(flower_x, flower_y, flower_name);
       
       if((flower.y + flower_size) >= 825){
-        game.world.addAt(flower, (that.newton.z + 1));
+        game.world.addAt(flower, (that.newton.z + (1 + (flower.y * 0.001))));
       }else{
-        game.world.addAt(flower, (that.newton.z - 1));
+        game.world.addAt(flower, (that.newton.z - (1 + (flower.y * 0.001))));
       }
         previous_flower = flower;
 
@@ -157,9 +157,15 @@ var flowers = {
     }
   },
 
-  killFlower: function(flower){
-      var dying_time = utilities.randomizer(5, 15);
-      game.add.tween(flower.scale).to({ x: flower_h}, flower_time, Phaser.Easing.Cubic.In, true);
-      game.add.tween(flower.scale).to({ y: 0 }, flower_time, Phaser.Easing.Cubic.In, true);
+  wiltFlower: function(flower){
+    var wiltiing_time = utilities.randomizer(5, 15);
+    console.log('wilting');
+    game.add.tween(flower.scale).to({ x: 0.01}, flower_time, Phaser.Easing.Cubic.In, true);
+    game.add.tween(flower.scale).to({ y: 0.01 }, flower_time, Phaser.Easing.Cubic.In, true);
+    game.time.events.add(Phaser.Timer.Second * wilting_time, this.killFlower, this, that, flower);
   },
+
+  killFlower: function(flower){
+    flower.destroy();
+  }
 };

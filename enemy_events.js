@@ -16,13 +16,17 @@ var enemy_events = {
     that.enemy_events_state.yolk = false;
     that.enemy_events_state.yolk_born = false;
     
-    that.enemy_events_state.canon = false;
+    that.enemy_events_state.canon_ball = false;
     
     that.enemy_events_state.UFO = false;
     that.enemy_events_state.UFO_beam = false;
 
     that.UFO_round = 0;
     that.UFO_move = false;
+    
+    that.UFO = game.add.group();
+    that.UFO.enableBody = true;
+    //that.UFO.physicsBodyType = Phaser.Physics.P2JS;
  
     that.enemy = game.add.group();
     that.enemy.enableBody = true;
@@ -125,10 +129,18 @@ var enemy_events = {
     game.time.events.add(Phaser.Timer.SECOND * 3.5, this.__killRaven, this, that);
   },
 
+  gravitateRaven: function(that){
+  
+    that.raven.body.data.gravityScale = 1;
+  },
+
   updateRaven: function(that){
-    var newton_distance = Math.abs(Math.round(that.raven.body.x) - Math.round(that.newton.x));
-    if(newton_distance < 30 && that.enemy_events_state.egg == false){
-      this.dropEgg(that);
+    if(that.enemy_events_state.raven_born == true){
+      var newton_distance = Math.abs(Math.round(that.raven.body.x) - Math.round(that.newton.x));
+      if(newton_distance < 30 && that.enemy_events_state.egg == false){
+        this.dropEgg(that);
+        that.raven.body.data.gravityScale = -0.75;
+      }
     }
   },
 
@@ -289,6 +301,7 @@ var enemy_events = {
     var position = utilities.setPatchPosition(that.apple_patches[patch]);
     var xpos = position['x'];
     var ypos = position['y'];
+    
     that.beehive = that.enemy.create(xpos, ypos, 'beehive');
     game.physics.p2.enable(that.beehive);
     game.world.addAt(that.beehive, that.newton.z + 1);
@@ -302,8 +315,9 @@ var enemy_events = {
     that.beehive.fixedBody = true;
     that.beehive.alpha = 1;
     that.beehive.anchor.set(0.5, 0.25);
-    that.beehive.animations.add('buzz', [0, 1, 2, 3, 2, 1], 10, true);
+    that.beehive.animations.add('buzz', [0, 1, 2, 3, 2, 1], 7.5, true);
     that.beehive.animations.play('buzz');
+    
     game.add.tween(that.beehive.scale).to( { x: 1 }, 3500, Phaser.Easing.Linear.Out, true)
     game.add.tween(that.beehive.scale).to( { y: 1 }, 3500, Phaser.Easing.Linear.Out, true)
     game.time.events.add(Phaser.Timer.SECOND * 5, this.__dropBeehive, this, that);
@@ -325,117 +339,131 @@ var enemy_events = {
   },
 
 //-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------\\
-  spawnCanonBall: function(that) {
-    that.enemy_events_state.canon_ball = true;
-    that.fake_canon_ball = that.effects.create(0, 700, 'canon-ball');
-    game.physics.p2.enable(that.fake_canon_ball);
-    game.world.addAt(that.fake_canon_ball, 2);
-    that.fake_canon_ball.x = utilities.randomizer(0, that.worldX);
-    that.fake_canon_ball.scale.y = 0.001;
-    that.fake_canon_ball.scale.x = 0.001;
-    that.fake_canon_ball.enableBody = true;
+  spawnCanonBall: function(that){
+
+    var xpos = utilities.randomizer(100, 1500);
+
+    that.cannon_ball = that.enemy.create(xpos, 700, 'cannon_ball');
+    game.world.addAt(that.cannon_ball, 0);
+    that.cannon_ball.enableBody = true;
+    game.physics.p2.enable(that.cannon_ball);
+    that.cannon_ball.anchor.setTo(0.5, 0.5);
+    that.cannon_ball.scale.x = 0.001;
+    that.cannon_ball.scale.y = 0.001;
+    that.cannon_ball.body.kinematic = true;
     that.canon_fire.play();
+
+    that.enemy_events_state.canon_ball = true;
+    game.add.tween(that.cannon_ball.body).to({ y: -300 }, 4500, Phaser.Easing.Linear.Out, true);
+    game.add.tween(that.cannon_ball.body).to({ x: that.newton.x }, 4500, Phaser.Easing.Linear.Out, true);
     
-    game.add.tween(that.fake_canon_ball).to( { y: -100 }, 8500, Phaser.Easing.Linear.Out, true);
-    game.add.tween(that.fake_canon_ball).to( { x: that.newton.body.x }, 8500, Phaser.Easing.Linear.Out, true);
-    game.add.tween(that.fake_canon_ball.scale).to( { x: 0.5 }, 8000, Phaser.Easing.Linear.Out, true);
-    game.add.tween(that.fake_canon_ball.scale).to( { y: 0.5 }, 8000, Phaser.Easing.Linear.Out, true);
-    
-    game.time.events.add(Phaser.Timer.SECOND * 11.5, this.__dropCanonBall, this, that);
+    game.add.tween(that.cannon_ball.scale).to({ x: 0.5 }, 8000, Phaser.Easing.Linear.Out, true);
+    game.add.tween(that.cannon_ball.scale).to({ y: 0.5 }, 8000, Phaser.Easing.Linear.Out, true);
+    game.time.events.add(Phaser.Timer.SECOND * 10, this.__dropCannonBall, this, that);
   },
 
-  __dropCanonBall: function(that) { 
-    that.real_canon_ball = that.enemy.create(that.fake_canon_ball.body.x, -500, 'canon_ball_vertical_shadow');
-    that.fake_canon_ball_2 = game.add.sprite(0, -500, 'canon_ball');
-    game.world.addAt(that.real_canon_ball, that.basket.z + 1);
-    that.real_canon_ball.anchor.set(0.5, 0);
-    that.real_canon_ball.scale.x = 0.1;
-    that.real_canon_ball.alpha = 0;
-    game.add.tween(that.real_canon_ball.scale).to({ x: 1 }, 1000, Phaser.Easing.Linear.Out, true);
-    game.add.tween(that.real_canon_ball).to({ alpha: 1 }, 1000, Phaser.Easing.Linear.Out, true);
-    game.time.events.add(Phaser.Timer.SECOND * 1, this.defineCanonBall, this, that);
+  __dropCannonBall: function(that){
+  
+    that.cannon_ball.scale.y = 1;
+    that.cannon_ball.scale.x = 1;
+    that.cannon_ball.bringToTop(that.cannon_ball);
+        
+    game.add.tween(that.cannon_ball.body).to({ y: 1100 }, 3000, Phaser.Easing.Linear.Out, true);
+    
+    that.cannon_ball.body.setCollisionGroup(that.enemy_collision_group);
+    that.cannon_ball.body.collides([that.ground_collision_group, that.newton_collision_group]);
+    game.time.events.add(Phaser.Timer.SECOND * 11, this.__dropCannonBall, this, that);
   },
   
-  defineCanonBall: function(that){
-    game.physics.p2.enable(that.real_canon_ball);
-    that.real_canon_ball.physicsBodyType = Phaser.Physics.P2JS;
-    that.real_canon_ball.body.mass = 5e10
-    that.real_canon_ball.anchor.set(0.5, 0);
-    that.real_canon_ball.scale.y = 1;
-    that.real_canon_ball.scale.x = 1;
-    game.add.tween(that.real_canon_ball.scale).to({ x: 1.5 }, 800, Phaser.Easing.Linear.Out, true);
-    game.add.tween(that.real_canon_ball.scale).to({ y: 1.5 }, 800, Phaser.Easing.Linear.Out, true);
-    game.time.events.add(Phaser.Timer.SECOND * that.fake_canon_ball.kill_time, this.__killCanonBall, this, that);
-  },
-
-  updateCanonBall: function(that, level) {
-    if(that.enemy_events_state.canon_ball == false){
-      this.spawnCanonBall(that, level);
-    }
-  },
-
-  __killCanonBall: function(that) {
-    that.fake_canon_ball.destroy();
+  __killCanonBall: function(that){
+    that.cannon_ball.destroy();
     that.enemy_events_state.canon_ball = false;
   },
-
+ //-------------------------------------------------------------------------------------------------------------------------------------------------//
+  
   spawnUFO: function(that) {
     that.enemy_events_state.UFO = true;
-    that.UFO = game.add.group();
-    that.UFO.enableBody = true;
+    
     that.UFO_horizontal_shadow = that.UFO.create(800, 800, 'ufo-horizontal-shadow');
-    that.UFO_vertical_shadow = that.UFO.create(800, 300, 'ufo-vertical-shadow');
+    game.world.addAt(that.UFO_horizontal_shadow, that.newton.z + 2);
     that.UFO_horizontal_shadow.alpha = 0.75;
     that.UFO_horizontal_shadow.anchor.set(0.5, 0.5);
-    that.UFO_vertical_shadow.anchor.set(0.5, 0.5);
     that.UFO_horizontal_shadow.animations.add('light-up', [0, 1], 5, true);
     that.UFO_horizontal_shadow.animations.play('light-up');
+    
+    that.UFO_vertical_shadow = that.UFO.create(800, 300, 'ufo-vertical-shadow');
+    game.world.addAt(that.UFO_vertical_shadow, that.newton.z + 2);
+    that.UFO_vertical_shadow.anchor.set(0.5, 0.5);
+    
     that.UFO.moving = true;
   },
 
   __moveUFO: function(that) {
     that.UFO_move = true;
+    
     var newton_position = that.newton.x;
     var random_time = (Math.floor(Math.random() * 5) + 1);
-    game.add.tween(that.UFO_horizontal_shadow).to( { x: newton_position }, random_time * 1000, Phaser.Easing.Linear.Out, true);
-    game.add.tween(that.UFO_vertical_shadow).to( { x: newton_position }, random_time * 1000, Phaser.Easing.Linear.Out, true);
+    
+    game.add.tween(that.UFO_horizontal_shadow.body).to( { x: newton_position }, random_time * 1000, Phaser.Easing.Linear.Out, true);
+    game.add.tween(that.UFO_vertical_shadow.body).to( { x: newton_position }, random_time * 1000, Phaser.Easing.Linear.Out, true);
+    
     game.time.events.add(Phaser.Timer.SECOND * random_time + 1, this.__stopUFO, this, that);
   },
 
   __stopUFO: function(that) {
     that.UFO_move = false;
-    if(that.UFO_round == 1){
+    
+    if(that.UFO_round == 4){
       game.time.events.add(Phaser.Timer.SECOND * 3, this.__chargeBeam, this, that);
-      game.time.events.add(Phaser.Timer.SECOND * 5, this.__fireBeam, this, that);
+      game.time.events.add(Phaser.Timer.SECOND * 5, this.__spawnBeam, this, that);
     }
   },
 
-  __fireBeam: function(that) {
-    that.beam = that.UFO.create(that.UFO_horizontal_shadow.x, -200, 'beam');
+  updateUFO: function(that){
+    if(that.enemy_events_state.UFO == true && that.UFO_round < 4){
+      if(that.UFO_move == false){
+        this.__moveUFO(that);
+        that.UFO_round += 1;
+      }
+    }
+  },
+
+  __spawnBeam: function(that) {
     that.enemy_events_state.UFO_beam = true;
+    
+    that.beam = that.enemy.create(that.UFO_horizontal_shadow.x, -200, 'beam');
+    game.world.addAt(that.beam, that.newton.z + 2);
     that.beam.anchor.setTo(0.5, 0);
     that.beam.alpha = 0;
+    that.beam.body.data.gravityScale = 0;
+    that.beam.body.kinematic = true;
+    that.beam.body.setCollisionGroup(that.beam_collision_group);
     that.beam.scale.x = 0.01;
     that.beam.scale.y = 0.01;
+
     that.blue_light = that.enemy.create(that.beam.x, that.beam.y + 550, 'blue-light');
     that.blue_light.anchor.setTo(0.5, 0.5);
     that.blue_light.alpha = 0;
     that.blue_light.scale.x = 2.5;
     that.blue_light.scale.y = 2.5;
+    
+    
     game.add.tween(that.beam).to( { alpha: 1 }, 3000, Phaser.Easing.Linear.Out, true);
-    game.add.tween(that.blue_light).to( { alpha: 1 }, 2000, Phaser.Easing.Linear.Out, true);
-    game.add.tween(that.UFO_horizontal_shadow).to( { alpha: 0 }, 1500, Phaser.Easing.Linear.Out, true);
-    game.add.tween(that.UFO_vertical_shadow).to( { alpha: 0 }, 1500, Phaser.Easing.Linear.Out, true);
     game.add.tween(that.beam.scale).to( { x: 1 }, 3000, Phaser.Easing.Linear.Out, true);
     game.add.tween(that.beam.scale).to( { y: 1 }, 750, Phaser.Easing.Linear.Out, true);
+     
+    game.add.tween(that.blue_light).to( { alpha: -1 }, 2000, Phaser.Easing.Linear.Out, true);
+    
+    game.add.tween(that.UFO_horizontal_shadow).to( { alpha: 0 }, 1500, Phaser.Easing.Linear.Out, true);
+    game.add.tween(that.UFO_vertical_shadow).to( { alpha: 0 }, 1500, Phaser.Easing.Linear.Out, true);
   },
 
   __chargeBeam: function(that){
     that.lightEmitter = game.add.emitter(900, 800, 100);
+    that.game.world.addAt(that.lightEmitter, 0);
     that.lightEmitter.width = 200;
     that.lightEmitter.makeParticles('corona');
     that.lightEmitter.setAlpha(0.3, 0.8);
-    that.game.world.addAt(that.lightEmitter, 0);
     that.lightEmitter.minParticleScale = 0.05;
     that.lightEmitter.maxParticleScale = 0.35;
     that.lightEmitter.setYSpeed(-750, -1000);
@@ -444,15 +472,5 @@ var enemy_events = {
     that.lightEmitter.maxRotation = 10;
     that.lightEmitter.x = that.UFO_horizontal_shadow.x;
     that.lightEmitter.start(false, 1600, 20, 0);
-    },
-
-
-  updateUFO: function(that){
-    if(that.enemy_events_state.UFO == true && that.UFO_round < 1){
-      if(that.UFO_move == false){
-        this.__moveUFO(that);
-        that.UFO_round += 1;
-      }
-    }
   }
 };

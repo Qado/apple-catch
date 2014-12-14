@@ -1,5 +1,6 @@
 var game = new Phaser.Game(1600, 900 , Phaser.AUTO, 'game_div');
 
+var score = 0;
 var music_volume = 1;
 var sfx_volume = 1;
 
