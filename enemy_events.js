@@ -368,7 +368,7 @@ var enemy_events = {
     that.cannon_ball.scale.x = 1;
     that.cannon_ball.bringToTop(that.cannon_ball);
         
-    game.add.tween(that.cannon_ball.body).to({ y: 1100 }, 3000, Phaser.Easing.Linear.Out, true);
+    game.add.tween(that.cannon_ball.body).to({ y: 1100 }, 1500, Phaser.Easing.Linear.Out, true);
     
     that.cannon_ball.body.setCollisionGroup(that.enemy_collision_group);
     that.cannon_ball.body.collides([that.ground_collision_group, that.newton_collision_group]);
