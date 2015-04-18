@@ -68,7 +68,7 @@ var play_state = {
 
     this.normal_theme = game.add.audio('theme-song');
     this.poison_theme = game.add.audio('poison-song');
-    //this.normal_theme.play();
+    this.normal_theme.play();
     this.punch = game.add.audio('collision-sound');
 
     this.left_bush.body.collides(this.newton_collision_group, world_events.shakeLeftBush, this);
@@ -196,7 +196,8 @@ var play_state = {
   },
 
   restart: function(){
-    game.state.start('play');
+    this.normal_theme.pause();  
+    game.state.start('boot');
   },
   
   update: function(){
@@ -206,7 +207,6 @@ var play_state = {
       sequencer.updateSequencer(play_state);
       apples.updateApple(play_state);
       world_events.updateWorld(play_state);
-      enemy_events.updateUFO(play_state);
       filters.updateFilter(play_state);
       enemy_events.updateRaven(play_state);
     }

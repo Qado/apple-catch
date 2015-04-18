@@ -101,10 +101,6 @@ var load_state = {
 
     game.load.spritesheet('s_blank_button', 'assets/images/sprites/etc/small_blank_button.png', 172, 106);
     
-    //game.load.spritesheet('play_button', 'assets/images/sprites/etc/play_button.png', 172, 106);
-    //game.load.spritesheet('music_button', 'assets/images/sprites/etc/music_button.png', 172, 106);
-    //game.load.spritesheet('settings_button', 'assets/images/sprites/etc/settings_button.png', 337, 105);
-    
     //Loading Audio//
     game.load.audio('theme-song', 'assets/sounds/game_theme.mp3');
     game.load.audio('title-theme', 'assets/sounds/title_theme.wav');
@@ -128,6 +124,6 @@ var load_state = {
 
   create: function(){
     game.stage.backgroundColor = '#C2E7FF';
-    game.state.start('play');
+    game.state.start('menu');
   }
 };

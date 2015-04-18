@@ -45,13 +45,5 @@ var sequencer = {
         world_events.startStorm(play_state);
       }
     }
-   
-    
-    //UFO Sequencer// 
-    if(that.score >= 0 && that.enemy_events_state.UFO == false){
-      if(utilities.randomizer(1, 1) == 1){
-//        enemy_events.spawnUFO(play_state);
-      }
-    }
   }
 };

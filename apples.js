@@ -116,7 +116,6 @@ var apples = {
     if(that.apple_amount < that.apple_max){
       this.spawnApple(that);
     }
-
   },
 
   spawnApple: function(that) {
