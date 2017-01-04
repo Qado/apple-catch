@@ -33,3 +33,7 @@ Catch the apples and avoid obstacles.
 
 # Misc
 You can play the original I made in Scratch right [here](https://scratch.mit.edu/projects/10484429)
+
+# License
+Apple Catch is available under the CC0 1.0 license. See the LICENSE file for more info.
+
