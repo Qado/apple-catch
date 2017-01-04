@@ -3,7 +3,7 @@ A game I made in order to learn a JavaScript, Phaser.js, Inkscape, Audacity, Gim
 
 ![Apple Catch](assets/images/apple_catch1.png)
 
-##Where to Play.
+## Where to Play.
 - [Here on Github](http://theqyd.github.io/apple-catch).
 - Clone it and add it to your webserver.
 - Download it. Unzip it. Add it to your webserver.
