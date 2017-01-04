@@ -4,17 +4,17 @@ A game I made in order to learn a JavaScript, Phaser.js, Inkscape, Audacity, Gim
 ![Apple Catch](assets/images/apple_catch1.png)
 
 ##Where to Play.
-a) [Here on Github](http://theqyd.github.io/apple-catch).
-b) Clone it and add it to your webserver.
-c) Download it. Unzip it. Add it to your webserver.
+a. [Here on Github](http://theqyd.github.io/apple-catch).
+b. Clone it and add it to your webserver.
+c. Download it. Unzip it. Add it to your webserver.
 
 ## How to Play.
 Catch the apples and avoid obsticles.
 
 #Rules.
-1) Avoid anything that isn't an apple. 
-2) The more apples you catch, the more apples will fall. 
-3) The more apples fall, the more bad apples fall.
+1. Avoid anything that isn't an apple. 
+2. The more apples you catch, the more apples will fall. 
+3. The more apples fall, the more bad apples fall.
 
 #Items
 Purple Apples: Newton's controls are in reverse.
