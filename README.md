@@ -9,7 +9,7 @@ A game I made in order to learn a JavaScript, Phaser.js, Inkscape, Audacity, Gim
 - Download it. Unzip it. Add it to your webserver.
 
 ## How to Play.
-Catch the apples and avoid obsticles.
+Catch the apples and avoid obstacles.
 
 #Rules.
 1. Avoid anything that isn't an apple. 
