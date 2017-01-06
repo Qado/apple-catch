@@ -9,7 +9,7 @@ var world_events = {
     that.world_events_state.night = false;
     that.world_events_state.lightning = false;
     that.world_events_state.day = true;
-   
+
     that.effects = game.add.group();
     that.effects.enableBody = true;
 
@@ -20,7 +20,7 @@ var world_events = {
 
     //Storm
     that.storm_time = (that.cloud_speed * 0.0001) + utilities.randomizer(40, 60);
-    
+
     //Stars
     that.stars = that.effects.create(0, 0, 'stars');
     game.world.addAt(that.stars, 0);
@@ -32,7 +32,7 @@ var world_events = {
     that.sun.anchor.setTo(0.5, 0.5);
     that.sun.scale.x = 5;
     that.sun.scale.y = 5;
-    
+
     //Moon
     that.moon = that.effects.create(0, 900, 'moon');
     game.world.addAt(that.moon, 1);
@@ -44,7 +44,7 @@ var world_events = {
     that.lightning = that.effects.create(0, 0, 'lightning');
     game.world.addAt(that.lightning, 1);
     that.lightning.alpha = 0;
-    
+
     //Foreground Rain Emitter//
     that.rainEmitter_1 = game.add.emitter(game.world.centerX, 0, 6000);
     that.effects.add(that.rainEmitter_1);
@@ -59,7 +59,7 @@ var world_events = {
     that.rainEmitter_1.maxRotation = 0;
     that.rainEmitter_1.minParticleAlpha = 0;
     that.rainEmitter_1.maxParticleAlpha = 0.2;
-    
+
     //Background Rain Emitter//
     that.rainEmitter_2 = game.add.emitter( game.world.centerX, 0, 6000);
     that.effects.add(that.rainEmitter_2);
@@ -110,7 +110,7 @@ var world_events = {
     that.strike_distance = that.thunder_time - that.lightning_time;
     that.strike_intensity = 1 - (that.strike_distance * 0.1);
     that.thunder_volume = 1 - (that.strike_distance * 0.1);
-    
+
     var flash_count = utilities.randomizer(1, 3);
     var onTime = 0.1;
     var offTime = 0.2;
@@ -123,7 +123,7 @@ var world_events = {
     }
     game.time.events.add(Phaser.Timer.SECOND * flashTime,  this.killLightning, this, that);
   },
-  
+
   flashOn: function(that, onTime){
     game.add.tween(that.lightning).to({ alpha: that.strike_intensity }, onTime * 10, Phaser.Easing.Linear.None, true);
   },
@@ -137,12 +137,12 @@ var world_events = {
     var lightning_choice = utilities.randomizer(1, 4);
     game.time.events.add(Phaser.Timer.SECOND * 1, this.startThunder, this, lightning_choice, that);
   },
-  
+
   startThunder: function(num, that){
     that.thunder = game.add.audio('thunder_' + num, that.thunder_volume, false);
     that.thunder.play();
   },
- 
+
   startRain: function(that){
     that.world_events_state.rain = true;
     that.world_events_state.rained = true;
@@ -158,7 +158,7 @@ var world_events = {
       that.rainEmitter_2.on = false;
       that.rainEmitter_1.on = false;
     }
-    
+
     game.add.tween(that.rainEmitter_1).to( { minParticleAlpha: 0.8 }, 30000, Phaser.Easing.Circular.None, true);
     game.add.tween(that.rainEmitter_1).to( { maxParticleAlpha: 1 }, 30000, Phaser.Easing.Circular.None, true);
     game.add.tween(that.rainEmitter_2).to( { minParticleAlpha: 0.8 }, 30000, Phaser.Easing.Circular.None, true);
@@ -189,11 +189,11 @@ var world_events = {
     that.world_events_state.storm = false;
   },
 
-  stopRain: function(that){ 
+  stopRain: function(that){
     that.world_events_state.rained = true;
 
   },
-  
+
   startRainbow: function(that){
     var rainbow_x = utilities.randomizer(-400, 400);
     var rainbow_y = utilities.randomizer(400, 600);
@@ -203,7 +203,7 @@ var world_events = {
     that.rainbow.alpha = 0;
     that.rainbow.scale.x = 2;
     that.rainbow.scale.y = 2;
-    
+
     game.add.tween(that.rainbow)
     .to( { alpha: rainbow_alpha }, 10000, Phaser.Easing.Linear.None, true)
     .to( { alpha: 0 }, 20000, Phaser.Easing.Linear.None, true)
@@ -218,7 +218,7 @@ var world_events = {
     game.add.tween(that.moon).to( { y: -200 }, 45000, Phaser.Easing.Circular.None, true);
     game.add.tween(that.moon.scale).to( { x: 1 }, 45000, Phaser.Easing.Circular.None, true);
     game.add.tween(that.moon.scale).to( { y: 1 }, 45000, Phaser.Easing.Circular.None, true);
-    
+
     game.time.events.add(Phaser.Timer.SECOND * 85, this.startDay, this, that);
   },
 
@@ -245,11 +245,11 @@ var world_events = {
     that.sun.x = 0;
     that.sun.y = 900;
   },
-  
+
   setCloud: function(num){
     return 'cloud_' + num;
   },
-  
+
   createCloudySky: function(that){
     that.cloud_speed = 1;
     that.cloud_cover = 1;
@@ -258,7 +258,7 @@ var world_events = {
       this.createCloud(that);
     }
   },
-  
+
 
   createCloud: function(that){
     var cloud_x = utilities.randomizer(0, 1800);
@@ -270,7 +270,7 @@ var world_events = {
     var cloud_time = (1 - cloud_scale) * (that.cloud_speed * cloud_x/1800);
     var cloud_fadein_time = utilities.randomizer(1, (cloud_time * 0.001)/8);
     var cloud_fadeout_time = utilities.randomizer(1, cloud_time);
-    
+
     //Putting cloud in front of moon.
     that.effects.addAt(cloud, 2);
     cloud.scale.x = cloud_scale;
@@ -287,14 +287,14 @@ var world_events = {
     //Moving the cloud across the sky.
     game.add.tween(cloud).to( { alpha: cloud_alpha }, cloud_fadein_time * 1000, Phaser.Easing.Linear.None, true);
     game.add.tween(cloud).to( { x: -300 }, cloud_time, Phaser.Easing.Linear.None, true);
-    
-    //Killing clouds once they make it through the scene. 
+
+    //Killing clouds once they make it through the scene.
     game.time.events.add(Phaser.Timer.SECOND * (cloud_time * 0.001) / 2 , this.fadeOutCloud, that, that, cloud, cloud_fadeout_time);
     game.time.events.add(Phaser.Timer.SECOND * (cloud_time * 0.001) + 1, this.killCloud, that, that, cloud);
   },
 
   fadeOutCloud: function(that, cloud, cloud_fadeout_time){
-  
+
     var cloud_alpha = utilities.randomizer(0, 5)/10;
     game.add.tween(cloud).to( { alpha: cloud_alpha }, cloud_fadeout_time * 1000, Phaser.Easing.Linear.None, true);
   },
@@ -343,11 +343,11 @@ var world_events = {
     if(utilities.randomizer(1, 1000) > that.cloud_cover){
       this.createCloud(that);
     }
-    
+
     if(that.world_events_state.storm == true && that.world_events_state.lightning == false){
       if(utilities.randomizer(1, 300) == 300){
-        this.startLightning(that); 
+        this.startLightning(that);
       }
-    } 
+    }
   }
 };

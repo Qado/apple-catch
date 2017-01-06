@@ -1,13 +1,13 @@
 var apples = {
-  
+
   init: function(that) {
-    
+
     //Apples Variables//
     that.apple_amount = 0; //Deals with the current number of apples on the screen.
     that.apple_max = 0; //Deal with the maximum number of apples on the screen.
     that.apple_scale_y = 1; //Deals with the scaling of the apple along the x-axis.
     that.apple_scale_x = 1; //Deals with the scaling of the apple along the y-axis.
-    
+
     //Apples Group//
     that.apples = game.add.group(); //Creates the apples group.
     that.apples.enableBody = true; //Enables the bodies for all members of the apples group.
@@ -105,14 +105,14 @@ var apples = {
     that.score_text.strokeThickness = 4; //Setting the outline thickness to 4.
     that.score_text.fill = '#ffd700'; //Setting the fill of the text to #ffd700 (gold)
     that.score_text.fixedToCamera = true; //Sets the text to a fixed position on the screen.
-    
+
     that.basket.body.collides(that.apple_collision_group);
   },
-  
+
 
   updateApple: function(that) {
-    that.apple_max = Math.abs(Math.round(Math.log(Math.abs(that.score) + 2)) * 3);
-    
+    that.apple_max = Math.abs(Math.round(Math.log(Math.abs(that.score) + 6)) * 3);
+
     if(that.apple_amount < that.apple_max){
       this.spawnApple(that);
     }
@@ -120,7 +120,7 @@ var apples = {
 
   spawnApple: function(that) {
     that.apple_amount += 1;
-    var apple_patch = utilities.randomizer(1, Object.keys(that.apple_patches).length); 
+    var apple_patch = utilities.randomizer(1, Object.keys(that.apple_patches).length);
     var apple_position = utilities.setPatchPosition(that.apple_patches[apple_patch]);
     var apple_x = apple_position['x'];
     var apple_y = apple_position['y'];
@@ -140,10 +140,10 @@ var apples = {
     var apple;
     var apples = [];
     var apple_factor = utilities.randomizer(1, 3);
-    
+
     for(apple_name in that.apple_data){
       apple = that.apple_data[apple_name];
-      
+
       if(apple['rarity'] >= apple_factor){
         apples = apples.concat(apple['id']);
       }
@@ -152,17 +152,17 @@ var apples = {
   },
 
   collectApple: function(apple_body){
-    
+
     apple = apple_body.sprite;
     that = apple.context;
     apple_id = that.apple_data[apple.key];
-    
+
     if(that.newton.body.y > 500){
-   
+
       apple_id.sound.play();
       this.scanApple(that, apple_id);
       that.score += apple_id.worth;
-    
+
       apple.destroy();
 
       that.score_text.text = 'x ' + that.score;
@@ -174,7 +174,7 @@ var apples = {
     that = play_state;
     apple = apple;
     apple_id = that.apple_data[apple.key];
-    
+
     var point_text = game.add.text(that.basket.x, that.basket.y, '+' + 0);
     point_text.font = 'Arial';
     point_text.fontSize = 20;
@@ -199,22 +199,22 @@ var apples = {
   },
 
   createApple: function(that, apple){
-    
+
     apple.physicsBodyType = Phaser.Physics.P2JS;
     game.physics.p2.enable(apple);
     apple.enableBody = true;
-    
+
     apple.checkWorldBounds = false;
     apple.body.collideWorldBounds = false;
-    
+
     apple.scale.x = 0.1;
     apple.scale.y = 0.1;
     apple.anchor.setTo(0.5, 0);
-    
+
     game.world.addAt(apple, that.newton.z + 2);
-    
+
     apple.body.data.gravityScale = 0;
-    
+
     this.growApple(that, apple);
   },
 
@@ -222,10 +222,10 @@ var apples = {
     game.add.tween(apple.scale).to({ y: 1 }, 2500, Phaser.Easing.Cubic.In, true);
     game.add.tween(apple.scale).to({ x: 1 }, 2500, Phaser.Easing.Cubic.In, true);
     game.time.events.add(Phaser.Timer.SECOND * 3.5, this.shakeApple, this, that, apple);
-  },     
+  },
 
   dropApple: function(that, apple){
-    
+
     if(that.newton.poisoned == true){
       game.add.tween(apple.scale).to({ y: that.worldY}, 10000, Phaser.Easing.Cubic.In, true);
       game.add.tween(apple.scale).to({ x: 0.5}, 2000, Phaser.Easing.Linear.In, true);
@@ -234,7 +234,7 @@ var apples = {
       apple.body.data.gravityScale = 0.5;
     }
   },
-  
+
   shakeApple: function(that, apple) {
     game.add.tween(apple.body)
       .to({ x: '+5' }, 50, Phaser.Easing.Linear.None)
@@ -252,7 +252,7 @@ var apples = {
   fadeApple: function(that, apple){
     game.add.tween(apple).to({ alpha: 0 }, utilities.randomizer(1000, 5000), Phaser.Easing.Linear.In, true);
   },
-  
+
   killApple: function(that, apple) {
     apple.destroy();
     that.apple_amount -= 1;

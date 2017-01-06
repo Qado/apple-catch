@@ -41,7 +41,7 @@ var world = {
     that.fade_screen = game.add.sprite(0, 0, 'black_screen');
     that.fade_screen.alpha = 1;
     that.fade_screen.fixedToCamera = true;
- 
+
   },
 
   updateWorld: function(that){

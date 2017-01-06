@@ -1,4 +1,4 @@
-var play_state = {    
+var play_state = {
 
   create: function(){
     this.score = 0;
@@ -7,13 +7,13 @@ var play_state = {
     game.physics.p2.setImpactEvents(true);
     game.physics.p2.updateBoundsCollisionGroup();
     game.physics.p2.gravity.y = 2000;
-    
+
     //
     this.cursors = game.input.keyboard.createCursorKeys();
     this.spacekey = game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
     this.worldX = game.world.width;
     this.worldY = game.world.height;
-    
+
     //Sets up collision groups for sprites
     this.basket_collision_group = game.physics.p2.createCollisionGroup();
     this.newton_collision_group = game.physics.p2.createCollisionGroup();
@@ -31,7 +31,7 @@ var play_state = {
     filters.init(play_state);
     flowers.init(play_state);
     world.init(play_state);
-    
+
     //Creating newton as a sprite and adding properties to him.
     this.newton = game.add.sprite(800, 0, 'newton');
     game.physics.p2.enable(this.newton);
@@ -47,7 +47,7 @@ var play_state = {
     this.newton.poisoned = false;
     this.newton.slip = false;
     this.newton.dead = false;
-    
+
     this.basket = game.add.sprite(this.newton.x, this.newton.y, 'basket');
     this.basket.enableBody = true;
     game.physics.p2.enable(this.basket);
@@ -58,7 +58,7 @@ var play_state = {
     this.basket.anchor.set(-0.15, -0.10);
     this.basket.body.fixedRotation = true;
     game.physics.p2.createLockConstraint(this.basket, this.newton, [0, 0], 1000);
-    
+
     this.coin = game.add.sprite(0, 0, 'coin');
     this.coin.animations.add('spin', [1, 2, 3, 4, 5, 6, 5, 4, 3, 2], 17.5, true);
     this.coin.fixedToCamera = true;
@@ -80,7 +80,7 @@ var play_state = {
     this.ground.body.collides(this.newton_collision_group, this.registerNewtonGroundContact, this);
     this.newton.body.collides(this.yolk_collision_group, this.__startNewtonSlip, this);
     this.ground.body.collides([this.enemy_collision_group, this.apple_collision_group, this.egg_piece_collision_group]);
-    
+
     apples.init(play_state);
 
     this.setnewtonGravity('day');
@@ -94,7 +94,7 @@ var play_state = {
     game.add.tween(this.fade_screen).to({ alpha: 0 }, 5000, Phaser.Easing.Linear.Out, true);
     game.world.addAt(this.fade_screen, this.newton.z + 1e7);
   },
-  
+
   registerNewtonGroundContact: function(){
     this.newton.touching_ground = true;
   },
@@ -119,7 +119,7 @@ var play_state = {
     this.newton.touching_ground = false;
   },
 
-  control: function(that){ 
+  control: function(that){
     if(this.cursors.right.isDown){
       this.moveRight();
     }
@@ -156,8 +156,8 @@ var play_state = {
       this.newton.gravity = 'night';
     }
   },
- 
-  moveRight: function(){ 
+
+  moveRight: function(){
     if(this.newton.x <= 1600){
       this.newton.body.moveRight(this.newton.speed);
       this.newton.animations.play('walk');
@@ -196,12 +196,12 @@ var play_state = {
   },
 
   restart: function(){
-    this.normal_theme.pause();  
+    this.normal_theme.pause();
     game.state.start('boot');
   },
-  
+
   update: function(){
-    
+
     if(this.newton.dead == false){
       this.control(play_state);
       sequencer.updateSequencer(play_state);
@@ -211,7 +211,7 @@ var play_state = {
       enemy_events.updateRaven(play_state);
     }
   },
-  
+
   alterNewtonState: function(apple){
     if(this.newton.poisoned == false){
       this.newton.poisoned = true;

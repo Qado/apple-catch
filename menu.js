@@ -1,5 +1,5 @@
 var menu_state = {
-  
+
   create: function() {
 
     game.physics.startSystem(Phaser.Physics.P2JS);
@@ -21,18 +21,12 @@ var menu_state = {
     this.background_1 = game.add.tileSprite(0, 0, 1600, 900, 'background_1');
 
     var title = utilities.formatText('Apple Catch', 800, 200, 125, 10);
-    var subtitle = utilities.formatText('BETA ver. 0.91', 800, 275, 30, 3);
     //Creates the play button and places it to the middle of the screen//
-        
+
     this.play_button = game.add.button(800, 675, 's_blank_button', this.fadeOut, this, 1, 0, 1, 1);
     this.play_button.anchor.setTo(0.5, 0.5);
     this.play_button.alpha = 0;
     var play_text = utilities.formatText('PLAY', 800, 675, 50, 5);
-
-    this.settings_button = game.add.button(800, 800, 's_blank_button', this.settings, this, 1, 0, 1, 1);
-    this.settings_button.anchor.setTo(0.5, 0.5);
-    this.settings_button.alpha = 0;
-    var settings_text = utilities.formatText('SETTINGS', 800, 800, 50, 5);
 
     this.fade_screen = game.add.sprite(800, 450, 'black_screen');
     this.fade_screen.anchor.setTo(0.5, 0.5);
@@ -46,9 +40,9 @@ var menu_state = {
     this.title_theme = game.add.audio('title-theme', music_volume, true);
     this.title_theme.play();
   },
- 
+
   fadeOut: function(){
-  
+
     game.add.tween(this.fade_screen).to( { alpha: 1 }, 1000, Phaser.Easing.Linear.Out, true);
     game.add.tween(this.title_theme).to( { volume: 0 }, 1000, Phaser.Easing.Linear.Out, true);
     game.time.events.add(Phaser.Timer.SECOND * 1.2, this.start, this);
@@ -56,7 +50,7 @@ var menu_state = {
   },
 
   /*===========================================================================*\
-  
+
     Start: Starts the play state.
 
     Args:
@@ -66,7 +60,7 @@ var menu_state = {
       Nothing.
 
     Starts the play state and pauses the menu screen song.
-  
+
   \*===========================================================================*/
   start: function() {
 
@@ -77,12 +71,12 @@ var menu_state = {
   muteMusic: function() {
     if(music_volume = 1) {
       music_volume = 0;
-    } 
+    }
     if(music_volume = 0) {
       music_volume = 1;
     }
   },
-  
+
   update: function() {
 
     //this.title_theme.volume = music_volume;
