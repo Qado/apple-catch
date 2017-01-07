@@ -1,16 +1,16 @@
 var flowers = {
 
   init: function(that){
-    
+
     that.flowers = game.add.group();
     that.flowers.enableBody = true;
-    
+
     that.flower_data = {
       'white_daisy': {
         'id': 'flower_1',
         'rarity': 3
       },
-      
+
       'pink_tulip': {
         'id': 'flower_2',
         'rarity': 3
@@ -20,33 +20,23 @@ var flowers = {
         'id': 'flower_3',
         'rarity': 2
       },
-      
+
       'yellow_lily': {
         'id': 'flower_4',
         'rarity': 2
       },
-      
+
       'blue_geranium': {
         'id': 'flower_5',
         'rarity': 1
       },
-      
+
       'violet': {
         'id': 'flower_6',
         'rarity': 1
       },
-
-      /*'mushroom': {
-        'id': 'mushroom_1',
-        'rarity': 2
-      },
-      
-      'glow_mushroom': {
-        'id': 'mushroom_2',
-        'rarity': 1
-      }*/
     };
-    
+
     that.flower_patches_1 = {
       '1': {
         'xmin': 330,
@@ -98,7 +88,7 @@ var flowers = {
     var flower;
     var flower_basket = [];
     var flower_factor = utilities.randomizer(1, 3);
-    
+
     for(flower_name in that.flower_data){
       flower = that.flower_data[flower_name];
       if(flower['rarity'] >= flower_factor){
@@ -136,7 +126,7 @@ var flowers = {
       flower_size = 33.33 * flower_height;
       flower_time = utilities.randomizer(10, 15) * 1000;
       flower = that.flowers.create(flower_x, flower_y, flower_name);
-      
+
       if((flower.y + flower_size) >= 825){
         game.world.addAt(flower, (that.newton.z + (1 + (flower.y * 0.001))));
       }else{
@@ -151,21 +141,7 @@ var flowers = {
       var flower_life = utilities.randomizer(20, 40);
       game.add.tween(flower.scale).to({ x: flower_height * flower_direction }, flower_time, Phaser.Easing.Cubic.In, true);
       game.add.tween(flower.scale).to({ y: flower_height }, flower_time, Phaser.Easing.Cubic.In, true);
-      
-      game.time.events.add(Phaser.Timer.Second * flower_life, this.killFlower, this, that);
-   
+
     }
-  },
-
-  wiltFlower: function(flower){
-    var wiltiing_time = utilities.randomizer(5, 15);
-    console.log('wilting');
-    game.add.tween(flower.scale).to({ x: 0.01}, flower_time, Phaser.Easing.Cubic.In, true);
-    game.add.tween(flower.scale).to({ y: 0.01 }, flower_time, Phaser.Easing.Cubic.In, true);
-    game.time.events.add(Phaser.Timer.Second * wilting_time, this.killFlower, this, that, flower);
-  },
-
-  killFlower: function(flower){
-    flower.destroy();
   }
 };

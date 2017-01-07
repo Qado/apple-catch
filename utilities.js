@@ -1,7 +1,7 @@
 var utilities  = {
 
   randomizer: function(min, max, exclude){
-    
+
     function pickRandom(min, max){
       return Math.round(Math.random() * (max - min) + min)
     }
@@ -14,12 +14,12 @@ var utilities  = {
   },
 
   setLayer: function(object, layer){
-  
+
     game.world.addAt(object, that.newton.z + layer);
   },
-  
+
   setPatchPosition: function(patch){
-    
+
     var xmin = patch.xmin;
     var xmax = patch.xmax;
     var ymin = patch.ymin;
@@ -42,13 +42,13 @@ var utilities  = {
     text = " " + text + " ";
     text = game.add.text(pos_x, pos_y, text);
     text.anchor.setTo(0.5, 0.5);
-    text.font = 'idolwild';
+    text.cssFont = 'Idolwild';
     text.fontSize = size;
     text.fontWeight = 'bold';
     text.stroke = '#b81515';
     text.strokeThickness = thickness;
     text.fill = '#efe296';
-    
+
     //Required to reset new text.
     text.pos_x = pos_x;
     text.pos_y = pos_y;

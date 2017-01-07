@@ -191,6 +191,7 @@ var world_events = {
 
   stopRain: function(that){
     that.world_events_state.rained = true;
+    that.world_events_state.rain = false;
 
   },
 

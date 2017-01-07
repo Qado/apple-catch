@@ -5,19 +5,18 @@
   <meta charset="utf-8" />
   <title>Apple Catch</title>
   <link rel="shortcut icon" href="favicon.ico" >
-
   <style>
     #game_div {
-      width: 1600px;
+      width: 100%;
       margin: auto;
-      margin-top: 50px;
+      margin-top: 10px;
     };
     @font-face {
       font-family: "Idolwild";
-      src: url("assets/fonts/idolwild-webfont.ttf") format("truetype");
+      src: url("assets/fonts/idolwild.woff") format("woff");
     }
   </style>
-  <div class="fontPreload" style="font-family: Idolwild;">.</div>
+  <div class="fontPreload" style="font-family: Idolwild;"></div>
   <script type="text/javascript" src="phaser.js"></script>
   <script type="text/javascript" src="boot.js"></script>
   <script type="text/javascript" src="load.js"></script>
@@ -36,9 +35,6 @@
 </head>
 
 <body>
-
-  <div id="game_div"> </div>
-
+  <div id="game_div"></div>
 </body>
-
 </html>

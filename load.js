@@ -1,6 +1,15 @@
 var load_state = {
 
   preload: function(){
+
+    game.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
+    game.scale.maxWidth = 1280;
+    game.scale.maxHeight = 720;
+    game.scale.pageAlignHorizontally = true;
+    game.scale.pageAlignVeritcally = true;
+    game.scale.refresh();
+
+    game.scale.setScreenSize();
     game.load.script('filter', 'phaser-master/filters/Marble.js');
     game.load.bitmapFont('idolwild', 'assets/fonts/idolwild.png', 'assets/fonts/idolwild.fnt');
     game.stage.backgroundColor = '#000000';
