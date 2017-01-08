@@ -42,7 +42,7 @@ var utilities  = {
     text = " " + text + " ";
     text = game.add.text(pos_x, pos_y, text);
     text.anchor.setTo(0.5, 0.5);
-    text.cssFont = 'Idolwild';
+    text.font = 'Lakki Reddy';
     text.fontSize = size;
     text.fontWeight = 'bold';
     text.stroke = '#b81515';

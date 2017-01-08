@@ -196,8 +196,6 @@ var play_state = {
   },
 
   restart: function(){
-    this.normal_theme.pause();
-    this.poison_theme.pause();
     game.state.start('boot');
   },
 

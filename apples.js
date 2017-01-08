@@ -97,13 +97,13 @@ var apples = {
 
     //Score Text//
     // (Will Be Moved) //
-    that.score_text = game.add.text(65, 10, 'x 0'); //Creating the score text with a size of 65 and a bold of 10.
-    that.score_text.font = 'Arial'; //Setting the text type of the score text to Arial.
-    that.score_text.fontSize = 45; //Setting the font size to 45.
-    that.score_text.fontWeight = 'bold'; //Setting the font type to bold.
-    that.score_text.stroke = '#000000'; //Setting the outline of the text to #000000 (black)
-    that.score_text.strokeThickness = 4; //Setting the outline thickness to 4.
-    that.score_text.fill = '#ffd700'; //Setting the fill of the text to #ffd700 (gold)
+    that.score_text = game.add.text(70, 10, 'x 0'); //Creating the score text with a size of 65 and a bold of 10.
+    that.score_text.font = 'Lakki Reddy'; //Setting the text type of the score text to Arial.
+    that.score_text.fontSize = 50; //Setting the font size to 45.
+    //that.score_text.fontWeight = 'bold'; //Setting the font type to bold.
+    that.score_text.stroke = '#b81515'; //Setting the outline of the text to #000000 (black)
+    that.score_text.strokeThickness = 2; //Setting the outline thickness to 4.
+    that.score_text.fill = '#efe296'; //Setting the fill of the text to #ffd700 (gold)
     that.score_text.fixedToCamera = true; //Sets the text to a fixed position on the screen.
 
     that.basket.body.collides(that.apple_collision_group);
@@ -245,8 +245,8 @@ var apples = {
       .to({ x: '-5' }, 50, Phaser.Easing.Linear.None)
       .start();
     game.time.events.add(Phaser.Timer.SECOND * 2.5, this.dropApple, this, that, apple);
-    game.time.events.add(Phaser.Timer.SECOND * 10, this.fadeApple, this, that, apple);
-    game.time.events.add(Phaser.Timer.SECOND * 13, this.killApple, this, that, apple);
+    game.time.events.add(Phaser.Timer.SECOND * 7, this.fadeApple, this, that, apple);
+    game.time.events.add(Phaser.Timer.SECOND * 10, this.killApple, this, that, apple);
   },
 
   fadeApple: function(that, apple){

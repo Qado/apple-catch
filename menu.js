@@ -2,8 +2,9 @@ var menu_state = {
 
   create: function() {
 
+    game.sound.stopAll();
     game.physics.startSystem(Phaser.Physics.P2JS);
-    game.scale.fullScreenScaleMode = Phaser.ScaleManager.EXACT_FIT;
+    //game.scale.fullScreenScaleMode = Phaser.ScaleManager.EXACT_FIT;
     this.worldX = game.world.width;
     this.worldY = game.world.height;
 

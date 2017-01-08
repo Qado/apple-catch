@@ -1,7 +1,13 @@
+WebFontConfig = {
+    google: {
+      families: ['Lakki Reddy']
+    }
+
+};
+
 var load_state = {
-
   preload: function(){
-
+    game.load.script('webfont', '//ajax.googleapis.com/ajax/libs/webfont/1.4.7/webfont.js');
     game.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
     game.scale.maxWidth = 1280;
     game.scale.maxHeight = 720;
@@ -97,8 +103,6 @@ var load_state = {
     game.load.image('flower_4', 'assets/images/sprites/flowers/yellow_lily.png');
     game.load.image('flower_5', 'assets/images/sprites/flowers/blue_geranium.png');
     game.load.image('flower_6', 'assets/images/sprites/flowers/violet.png');
-    game.load.image('mushroom_1', 'assets/images/sprites/flowers/mushroom.png');
-    game.load.image('mushroom_2', 'assets/images/sprites/flowers/glow_mushroom.png');
 
     game.load.spritesheet('s_blank_button', 'assets/images/sprites/etc/small_blank_button.png', 172, 106);
 
